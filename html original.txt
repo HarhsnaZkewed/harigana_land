@@ -10,70 +10,94 @@
 
 
 <div class="form-container">
+    
     <h2>Property Valuation</h2>
 
+    <div class="toggle-switch">
+        <label class="switch">
+            <input type="radio" name="location_option" id="option1_toggle" value="option1" checked>
+            <span class="slider" data-label="Dropdown">Dropdown</span>
+        </label>
+        <label class="switch">
+            <input type="radio" name="location_option" id="option2_toggle" value="option2">
+            <span class="slider" data-label="Google Map">Google Map</span>
+        </label>
+    </div>
 
-    <h2>Location select option 1</h2>
+
+
+    
     <form id="valuation_form" method="POST" action="{% url 'property_view' %}">
         {% csrf_token %}
 
         <!-- Two-column grid for Location and Property Type -->
-        <div class="two-column">
-            
+        
+        <div id="option1_container" class="form-container2">
+            <h2>Dropdown to select the location </h2>
             <div>
                 <label for="district">District</label>
                 <select id="district" name="district" required>
                     <option value="">-- Select District --</option>
-                    {% for district in districts %}
-                        <option value="{{ district.id }},{{district.name_en}}" 
-                                {% if form_data.district == district.name_en %}selected{% endif %}>
-                            {{ district.name_en }}
-                        </option>
-                    {% endfor %}
+                        {% for district in districts %}
+                            <option value="{{ district.id }},{{district.name_en}}" 
+                                    {% if form_data.district == district.name_en %}selected{% endif %}>
+                                {{ district.name_en }}
+                            </option>
+                        {% endfor %}
                 </select>
             </div>
-            
+                
             <div>
                 <label for="city">City</label>
-                <select id="city" name="city">
+                <select id="city" name="city" required>
                     <option value="">-- Select City --</option>
-                    {% for city in cities %}
-                        <option value="{{ city.id }},{{city.name_en}}" 
-                                {% if form_data.city == city.name_en %}selected{% endif %}>
-                            {{ city.name_en }}
-                        </option>
-                    {% endfor %}
+                        {% for city in cities %}
+                            <option value="{{ city.id }},{{city.name_en}}" 
+                                    {% if form_data.city == city.name_en %}selected{% endif %}>
+                                {{ city.name_en }}
+                            </option>
+                        {% endfor %}
                 </select>
-            </div>
-            
+            </div>        
+        
+
              
             <div>
                 <label for="property_type">Property Type</label>
                 <select id="property_type" name="property_type" required>
                     <option value="house" {% if form_data.property_type == "house" %}selected{% endif %}>House</option>
-                    <option value="land" {% if form_data.property_type == "land" %}selected{% endif %}>Land</option>
-                    
+                    <option value="land" {% if form_data.property_type == "land" %}selected{% endif %}>Land</option>                        
                 </select>
             </div>
 
         </div>
 
         
-        <div class="map-container"> 
-            <h2>Location select option 2</h2>
-            <div class="two-column">
-                    <label for="latitude">Latitude:</label>
-                    <input type="text" id="latitude" name="latitude" readonly>
-                    <label for="longitude">Longitude:</label>
-                    <input type="text" id="longitude" name="longitude" readonly>
-                    <label for="map_district">District:</label>
-                    <input type="text" id="map_district" name="map_district" readonly>
-                    <label for="map_city">City:</label>
-                    <input type="text" id="map_city" name="map_city" readonly><br><br>
-                    
-            </div>
+        <div id="option2_container" class="form-container2 hidden">
+            
+                <h2>Google Map to select the location</h2>
+                
+                        <label for="latitude">Latitude:</label>
+                        <input type="text" id="latitude" name="latitude" readonly>
+                        <label for="longitude">Longitude:</label>
+                        <input type="text" id="longitude" name="longitude" readonly>
+                        <label for="map_district">District:</label>
+                        <input type="text" id="map_district" name="map_district" readonly>
+                        <label for="map_city">City:</label>
+                        <input type="text" id="map_city" name="map_city" readonly><br><br>
+
+                        <div>
+                            <label for="property_type">Property Type</label>
+                            <select id="property_type" name="property_type" required>
+                                <option value="house" {% if form_data.property_type == "house" %}selected{% endif %}>House</option>
+                                <option value="land" {% if form_data.property_type == "land" %}selected{% endif %}>Land</option>
+                                
+                            </select>
+                        </div>                  
+                
+            
+                <div id="map"></div>
            
-            <div id="map"></div>
         </div>        
 
         <h2>Additional Filters</h2>
@@ -134,6 +158,8 @@
 
     </form>
 </div>
+
+
 
 
     <h2>Property Records:</h2>
@@ -326,7 +352,44 @@
         });
     </script>
 
-    
-        
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const option1Toggle = document.getElementById("option1_toggle");
+            const option2Toggle = document.getElementById("option2_toggle");
+            const option1Container = document.getElementById("option1_container");
+            const option2Container = document.getElementById("option2_container");
+
+            // Function to toggle options
+            function toggleOptions() {
+                if (option1Toggle.checked) {
+                    option1Container.classList.remove("hidden");
+                    option2Container.classList.add("hidden");
+                    disableInputs(option2Container, true);
+                    disableInputs(option1Container, false);
+                } else if (option2Toggle.checked) {
+                    option2Container.classList.remove("hidden");
+                    option1Container.classList.add("hidden");
+                    disableInputs(option1Container, true);
+                    disableInputs(option2Container, false);
+                }
+            }
+
+            // Helper function to enable/disable inputs within a container
+            function disableInputs(container, disable) {
+                const inputs = container.querySelectorAll("input, select");
+                inputs.forEach(input => {
+                    input.disabled = disable;
+                });
+            }
+
+            // Event listeners for the toggles
+            option1Toggle.addEventListener("change", toggleOptions);
+            option2Toggle.addEventListener("change", toggleOptions);
+
+            // Initialize the state
+            toggleOptions();
+        });
+    </script>
+          
 
 {% endblock content %}
