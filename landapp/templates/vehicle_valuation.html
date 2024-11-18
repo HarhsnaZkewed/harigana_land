@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="container mt-5">
+    <!-- Status Message -->
+    {% if messages %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {% for message in messages %}
+        <strong>{{ message }}</strong>
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <!-- Page Heading -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">What is Your Car Worth?</h2>
+                <p class="text-muted">Find the current market value of your car by selecting the vehicle details below.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vehicle Form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="POST" class="form-horizontal">
+                        {% csrf_token %}
+                        <div class="form-row row mb-3">
+                            <div class="form-group col-md-4 mb-3">
+                                {{ form.make|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-4 mb-3">
+                                {{ form.model|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-4 mb-3">
+                                {{ form.year|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            {{ form.purpose|as_crispy_field }}
+                        </div>
+                        <div class="form-group text-center">
+                          <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fa fa-search"></i> Check Valuation
+                        </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <br>
+        </div>
+    </div>
+
+    <!-- Information Section -->
+     <!--
+    <div class="text-center mt-4">
+        <h4 class="fw-bold">Get a Current Market Value for Your Car</h4>
+        <p class="text-muted">Here’s what you’ll need to provide:</p>
+    </div>
+
+    <div class="row text-center mt-4">
+        <div class="col-md-4 mb-3">
+            <div class="d-flex align-items-start">
+                <i class="fa-solid fa-circle-check fa-xl me-2"></i>
+                <div>
+                    <b>Select your car</b>
+                    <p>Enter the make, model, and year of the vehicle.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="d-flex align-items-start">
+                <i class="fa-solid fa-circle-check fa-xl me-2"></i>
+                <div>
+                    <b>Tell us about the car's condition</b>
+                    <p>Provide the mileage, vehicle condition, and any additional options the vehicle is equipped with.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="d-flex align-items-start">
+                <i class="fa-solid fa-circle-check fa-xl me-2"></i>
+                <div>
+                    <b>Evaluate your car's resale value</b>
+                    <p>Determine your target price for your vehicle.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    -->
+
+    <!-- No Data Message -->
+    {% if no_data %}
+    <div class="text-center mt-4">
+        <div class="alert alert-info">
+            <strong>No data available for the selected vehicle model.</strong>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+    /* Ensure consistency with RPA.html */
+    .card {
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .btn-primary {
+        width: auto; /* Adjust width of button */
+    }
+
+    .form-control, .form-select {
+        z-index: 1000; /* Ensure dropdown appears on top */
+    }
+</style>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; cookies.length > i; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    let make_field = document.getElementById("id_make");
+    let model_field = document.getElementById("id_model");
+
+    make_field.addEventListener("change", pickState);
+
+    function pickState(e) {
+        make_id = e.target.value;
+        const data = { user_id: make_id };
+        let url = "{% url 'models' %}";
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            model_field.innerHTML = `<option value="" selected>---------------</option>`;
+            for (let i = 0; data.length > i; i++) {
+                model_field.innerHTML += `<option value="${data[i]["id"]}">${data[i]["name"]}</option>`;
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+
+    let input = document.getElementById("id_name");
+    let select = document.getElementsByTagName("select");
+
+    input.classList.add("form-control");
+
+    for (let i = 0; select.length > i; i++) {
+        select[i].classList.add("form-select");
+    }
+</script>
+
+{% endblock content %}

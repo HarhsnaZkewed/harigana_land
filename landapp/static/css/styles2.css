@@ -1,0 +1,118 @@
+.valuation-form-container {
+    background-color: #f8f9fa; /* Light grey color */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba
+}
+
+.navbar-expand-lg bg-primary{
+    background-color: #063970;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e6ffe6; /* Light green background */
+    margin: 0;
+    padding: 20px;
+}
+
+.form-container {
+    background-color: rgba(255, 255, 255, 0.6); /* Transparent white background */
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+h2 {
+    color: #333;
+    margin-top: 20px;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-top: 10px;
+}
+
+input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+select {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="black" stroke-width="2" d="M6 9l6 6 6-6z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 12px 12px;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+input[type="submit"] {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+input[type="submit"]:hover {
+    background-color: #218838;
+}
+
+.error {
+    color: red;
+    font-size: 12px;
+}
+
+/* Grid layout for side-by-side elements */
+.two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.three-column {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.three-column input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+/* Styles for the results table */
+.results-table {
+    width: 100%;
+    max-width: 800px;
+    border-collapse: collapse;
+    margin: 20px auto 0;
+}
+
+.results-table th,
+.results-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+.results-table th {
+    background-color: #f2f2f2;
+}
+
+.results-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}

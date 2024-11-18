@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Map Click to Set Marker</title>
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h3>Select Location on Google Map</h3>
+
+    <label>Latitude:</label>
+    <input type="text" id="latitude" readonly>
+    <label>Longitude:</label>
+    <input type="text" id="longitude" readonly><br><br>
+
+    <label>District:</label>
+    <input type="text" id="district" readonly>
+    <label>City:</label>
+    <input type="text" id="city" readonly><br><br>
+
+    <label>Full Address:</label>
+    <input type="text" id="full_address" readonly><br><br>
+
+    <div id="map"></div>
+
+    <!-- Google Maps JavaScript API with API Key and Callback -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmGsEqTlt0hvk0NLuE0F-6WMjlIiRp5qE&callback=initMap" async defer></script>
+
+    <script>
+        let map;
+        let marker;
+
+        function initMap() {
+            const defaultLocation = { lat: 7.8731, lng: 80.7718 }; // Centered on Sri Lanka
+
+            // Initialize the map
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 8,
+                center: defaultLocation,
+            });
+
+            // Add click listener to capture latitude and longitude on click
+            map.addListener("click", (event) => {
+                const position = event.latLng;
+                const latitude = position.lat();
+                const longitude = position.lng();
+
+                // Place or move the marker at the clicked location
+                if (marker) {
+                    marker.setPosition(position);
+                } else {
+                    marker = new google.maps.Marker({
+                        position: position,
+                        map: map,
+                    });
+                }
+
+                // Populate latitude and longitude text boxes
+                document.getElementById("latitude").value = latitude;
+                document.getElementById("longitude").value = longitude;
+
+                // Fetch the address details using Geocoding API
+                fetchAddressDetails(latitude, longitude);
+            });
+        }
+
+        function fetchAddressDetails(lat, lng) {
+            const apiKey = "AIzaSyCmGsEqTlt0hvk0NLuE0F-6WMjlIiRp5qE"; // Replace with your actual API key
+            const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
+
+            fetch(geocodeUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "OK" && data.results.length > 0) {
+                        const addressComponents = data.results[0].address_components;
+                        const fullAddress = data.results[0].formatted_address;
+                        console.log("Full Address Components:", addressComponents); // Debugging all components
+
+                        let district = "";
+                        let city = "";
+
+                        // Loop through address components to find district and city
+                        for (const component of addressComponents) {
+                            console.log("Component:", component.long_name, "Types:", component.types); // Log each component for analysis
+
+                            // Check for district (prioritize level 2, then level 1)
+                            if (component.types.includes("administrative_area_level_2")) {
+                                district = component.long_name;
+                            } else if (!district && component.types.includes("administrative_area_level_1")) {
+                                district = component.long_name;
+                            }
+
+                            // Check for city (prioritize locality, then level 3)
+                            if (component.types.includes("locality")) {
+                                city = component.long_name;
+                            } else if (!city && component.types.includes("administrative_area_level_3")) {
+                                city = component.long_name;
+                            }
+                        }
+
+                        // Log the results for debugging
+                        console.log("Identified District:", district || "Not found");
+                        console.log("Identified City:", city || "Not found");
+
+                        // Set values to text boxes
+                        document.getElementById("district").value = district || "Not found";
+                        document.getElementById("city").value = city || "Not found";
+                        document.getElementById("full_address").value = fullAddress; // Set the full address
+                    } else {
+                        console.error("Geocoding error:", data.status);
+                        document.getElementById("full_address").value = "Address not found"; // Handle error
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching address details:", error);
+                    document.getElementById("full_address").value = "Address not found"; // Handle fetch error
+                });
+        }
+    </script>
+
+    
+</body>
+</html>
