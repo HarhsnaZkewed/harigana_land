@@ -83,7 +83,8 @@ DATABASES = {
         'NAME': 'property',
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': 'mongodb://localhost:27017/',  # Your MongoDB connection string
+            'host': 'mongodb+srv://zkewed:zkewed123A@vehicalevaluation.d9ufa.mongodb.net/?retryWrites=true&w=majority&appName=VehicalEvaluation',  # Your MongoDB connection string
+            'tlsAllowInvalidCertificates': True
         }
     }
 }
