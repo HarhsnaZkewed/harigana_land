@@ -20,6 +20,11 @@ __pycache__/
 # Virtual environment
 venv/
 env/
+Sri Lankan Cities/
+
+
+# Ignore the text file
+html original.txt
 
 # Byte-compiled files
 *.py[cod]
