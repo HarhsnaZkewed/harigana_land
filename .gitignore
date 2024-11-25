@@ -12,7 +12,7 @@ __pycache__/
 
 # Media and static files
 /media/
-/staticfiles/
+
 
 # VS Code settings
 .vscode/
@@ -21,6 +21,7 @@ __pycache__/
 venv/
 env/
 Sri Lankan Cities/
+staticfiles/
 
 
 # Ignore the text file
