@@ -12,6 +12,7 @@ __pycache__/
 
 # Media and static files
 /media/
+/staticfiles/
 
 # VS Code settings
 .vscode/
