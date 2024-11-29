@@ -246,7 +246,7 @@ input[type="submit"]:hover {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: gray;
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -269,7 +269,6 @@ input[type="submit"]:hover {
     content: "";
     height: 34px;
     width: 34px;
-    background-color: white;
     border-radius: 50%;
     bottom: 3px;
     left: 3px;
@@ -278,7 +277,7 @@ input[type="submit"]:hover {
 }
 
 input:checked + .slider {
-    background-color: #4caf50;
+    background-color: gray;
 }
 
 input:checked + .slider:before {
@@ -308,13 +307,13 @@ input:checked + .slider:before {
     position: relative;
     display: inline-block;
     width: auto;
-    height: 40px;
+    height: 50px;
 }
 
 .slider {
     display: flex;
     align-items: center;
-    background-color: #ccc;
+    
     border-radius: 20px;
     padding: 0 10px;
     cursor: pointer;
@@ -333,13 +332,13 @@ input:checked + .slider:before {
 }
 
 .slider .option-left {
-    background-color: #f44336; /* Red for Off */
-    color: white;
+    background-color: gray; /* Red for Off */
+
 }
 
 .slider .option-right {
-    background-color: #4cae4f; /* Green for On */
-    color: white;
+    background-color: gray; /* Green for On */
+
 }
 
 .slider:before {
@@ -347,7 +346,6 @@ input:checked + .slider:before {
     position: absolute;
     height: 34px;
     width: calc(50% - 4px);
-    background-color: white;
     border-radius: 20px;
     bottom: 3px;
     left: 3px;
@@ -366,3 +364,11 @@ input:checked + .slider .option-left {
 input:checked + .slider .option-right {
     opacity: 1;
 }
+
+h2.headertekst {
+    text-align: center;
+  }
+
+h4.headertekst {
+    text-align: center;
+  }

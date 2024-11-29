@@ -146,7 +146,7 @@ def property_view(request):
                         if property.unit_price and re.search(r'[\d,\.]+', str(property.unit_price))  # Check for valid numeric value
                     ) / len(rented_propeties)
                 else:
-                    avg_rent_value = 0  # Default value if no rented properties found       
+                    avg_rent_value = "RS 0.00"  # Default value if no rented properties found       
 
             # Extract numeric values safely
             def extract_numeric_value(value):
@@ -171,41 +171,10 @@ def property_view(request):
                     min_value = min(numeric_values)
                     avg_value = sum(numeric_values) / len(numeric_values)
                 else:
-                    max_value = min_value = avg_value = None  # Handle the case with no valid numbers
+                    max_value = min_value = avg_value = "RS 0.00"  # Handle the case with no valid numbers
             else:
-                max_value = min_value = avg_value = None  # Handle the case with no properties
+                max_value = min_value = avg_value = "RS 0.00"  # Handle the case with no properties
 
-            """if filtered_properties:
-                max_value = max(
-                                    float(re.search(r'[\d,\.]+', str(property.unit_price)).group(0).replace(',', ''))
-                                    for property in filtered_properties
-                                    if property.unit_price and re.search(r'[\d,\.]+', str(property.unit_price))  # Check for valid numeric value
-                                )
-                min_value = min(
-                                    float(re.search(r'[\d,\.]+', str(property.unit_price)).group(0).replace(',', ''))
-                                    for property in filtered_properties
-                                    if property.unit_price and re.search(r'[\d,\.]+', str(property.unit_price))  # Check for valid numeric value
-                                )
-                if filtered_properties:
-                    avg_value = sum(
-                                    
-                                    float(re.search(r'[\d,\.]+', str(property.unit_price)).group(0).replace(',', ''))
-                                    for property in filtered_properties
-                                    if property.unit_price and re.search(r'[\d,\.]+', str(property.unit_price))  # Check for valid numeric value
-
-                                ) / len(filtered_properties)
-                else:
-                    avg_value = 0  # or handle the case differently
-
-            
-            print(max_value)"""
-
-            max_value = f"RS{max_value: ,.2f}"
-            min_value = f"RS{min_value: ,.2f}"
-            avg_value = f"RS{avg_value: ,.2f}"
-            avg_rent_value = f"Rs{avg_rent_value: ,.2f}"
-
-            print(max_value)
 
             prices = {
                 'max_value':max_value,
@@ -220,8 +189,7 @@ def property_view(request):
                 'form_data': form_data,
                 'districts': districts,
                 'cities': cities,
-                'prices':prices
-                
+                'prices':prices        
 
             }
             return render(request, 'property_valuation.html', context)
@@ -248,8 +216,7 @@ def property_view(request):
 
             map_city = request.POST.get('map_city', '')
             print(map_city)
-           
-            
+                      
 
             property_type = request.POST.get('property_type', '').strip()
             bedrooms = request.POST.get('bedrooms', '')
@@ -316,7 +283,7 @@ def property_view(request):
                         if property.price is not None  # Check if property.price is not None
                     ) / len(rented_propeties)
                 else:
-                    avg_rent_value = 0  # Default value if no rented properties found       
+                    avg_rent_value = "RS 0.00"  # Default value if no rented properties found       
 
             # Extract numeric values safely
             def extract_numeric_value(value):
@@ -341,43 +308,10 @@ def property_view(request):
                     min_value = min(numeric_values)
                     avg_value = sum(numeric_values) / len(numeric_values)
                 else:
-                    max_value = min_value = avg_value = None  # Handle the case with no valid numbers
+                    max_value = min_value = avg_value = 0  # Handle the case with no valid numbers
             else:
-                max_value = min_value = avg_value = None  # Handle the case with no properties
-
-            """
-            if filtered_properties:
-                max_value = max(
-                                    (float(''.join(re.findall(r'\d+\.?\d*', str(property.unit_price)))) 
-                                    for property in filtered_properties 
-                                    if property.unit_price is not None and re.search(r'\d+', str(property.unit_price))),
-                                    default=0  # Use 0 or any appropriate default value
-                                )
-                min_value = min(
-                                    (float(''.join(re.findall(r'\d+\.?\d*', str(property.unit_price)))) 
-                                    for property in filtered_properties 
-                                    if property.unit_price is not None and re.search(r'\d+', str(property.unit_price))),
-                                    default=0  # Use 0 or any appropriate default value
-                                )
-                if filtered_properties:
-                    avg_value = sum(
-                                    
-                                    (float(''.join(re.findall(r'\d+\.?\d*', str(property.unit_price)))) 
-                                    for property in filtered_properties 
-                                    if property.unit_price is not None and re.search(r'\d+', str(property.unit_price))),
-                                    default=0  # Use 0 or any appropriate default value
-
-                                ) / len(filtered_properties)
-                else:
-                    avg_value = 0  # or handle the case differently
-            """            
+                max_value = min_value = avg_value = 0  # Handle the case with no properties
             
-            max_value = f"RS{max_value: ,.2f}"
-            min_value = f"RS{min_value: ,.2f}"
-            avg_value = f"RS{avg_value: ,.2f}"
-            avg_rent_value = f"Rs{avg_rent_value: ,.2f}"
-        
-
             prices = {
                 'max_value':max_value,
                 'min_value':min_value,

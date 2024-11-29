@@ -11,12 +11,14 @@
 
 <div class="form-container">
     
-    <h2>Property Valuation</h2>
+    <h2 class="headertekst">Property Valuation</h2>
 
     <form id="valuation_form" method="POST" action="{% url 'property_view' %}">
         {% csrf_token %}
 
-        <h3>Use the following options to select the location</h3>
+
+        <h4 class="headertekst">Use the following options to select the location</h4>
+        
         <div class="toggle-switch">
             <label class="switch">
                 <input type="checkbox" id="toggle-switch-1">
@@ -30,36 +32,47 @@
         <!-- Hidden form fields to store the selected option value -->
         <input type="hidden" id="selected_option" name="selected_option" value="Dropdown Menu"> <!-- Default value -->
 
+        <div>
+            <label for="property_type">Property Type</label>
+            <select id="property_type" name="property_type" required>
+                <option value="house" {% if form_data.property_type == "house" %}selected{% endif %}>House</option>
+                <option value="land" {% if form_data.property_type == "land" %}selected{% endif %}>Land</option>
+                <option value="apartment" {% if form_data.property_type == "apartment" %}selected{% endif %}>Apartment</option>
+                <option value="rental" {% if form_data.property_type == "rental" %}selected{% endif %}>Rental Propeties</option>
+                
+            </select>
+        </div>
 
-
+        
         <div id="option1_container" class="option1-container active">
             <h2>Dropdown to select the location </h2>
              
             <div>
                 <label for="district">District</label>
-                <select id="district" name="district">
+                <select id="district" name="district" required>
                     <option value="">-- Select District --</option>
-                        {% for district in districts %}
-                            <option value="{{ district.id }},{{district.name_en}}" 
-                                    {% if form_data.district == district.name_en %}selected{% endif %}>
-                                {{ district.name_en }}
-                            </option>
-                        {% endfor %}
+                    {% for district in districts %}
+                        <option value="{{ district.id }},{{district.name_en }}" 
+                                {% if form_data.district == district.name_en %}selected{% endif %}>
+                            {{ district.name_en }}
+                        </option>
+                    {% endfor %}
                 </select>
             </div>
-                
+        
             <div>
                 <label for="city">City</label>
-                <select id="city" name="city">
+                <select id="city" name="city" required>
                     <option value="">-- Select City --</option>
-                        {% for city in cities %}
-                            <option value="{{ city.id }},{{city.name_en}}" 
-                                    {% if form_data.city == city.name_en %}selected{% endif %}>
-                                {{ city.name_en }}
-                            </option>
-                        {% endfor %}
+                    {% for city in cities %}
+                        <option value="{{ city.id }},{{city.name_en }}" 
+                                {% if form_data.city == city.name_en %}selected{% endif %}>
+                            {{ city.name_en }}
+                        </option>
+                    {% endfor %}
                 </select>
-            </div>        
+            </div>
+        
              
             <!--
             <div>
@@ -75,90 +88,89 @@
 
         
         <div id="option2_container" class="option2-container">
-                                        
-                        
-            <div id="map"></div>    
-
-                        <input type="text" id="latitude" name="latitude" hidden>
-                        
-                        <input type="text" id="longitude" name="longitude" hidden>
-
-                        <label for="map_district">District:</label>
-                        <input type="text" id="map_district" name="map_district" readonly>
-                        <label for="map_city">City:</label>
-                        <input type="text" id="map_city" name="map_city" readonly><br><br>                                
-                
-            
-                
-           
+            <h2> Location selection From Map </h2>
+            <input type="text" id="latitude" name="latitude" hidden>
+            <input type="text" id="longitude" name="longitude" hidden>
+        
+            <label for="map_district">District:</label>
+            <input type="text" id="map_district" name="map_district" readonly>
+        
+            <label for="map_city">City:</label>
+            <input type="text" id="map_city" name="map_city" readonly><br><br>
+        
+            <div id="map"></div>
         </div>
         
-        <div>
-            <label for="property_type">Property Type</label>
-            <select id="property_type" name="property_type" required>
-                <option value="house" {% if form_data.property_type == "house" %}selected{% endif %}>House</option>
-                <option value="land" {% if form_data.property_type == "land" %}selected{% endif %}>Land</option>
-                <option value="apartment" {% if form_data.property_type == "apartment" %}selected{% endif %}>Apartment</option>
-                <option value="rental" {% if form_data.property_type == "rental" %}selected{% endif %}>Rental Propeties</option>
-                
-            </select>
-        </div>
+        
+        <div class="three-column11">
+            <h2>Additional Filters</h2>
 
-        <h2>Additional Filters</h2>
-
-        <!-- Three-column grid for additional filters -->
-        <div class="three-column">
-            <div>
-                <label for="bedrooms">No of Rooms</label>
-                <input type="checkbox" class="bedrooms_check" name="bedrooms_check" {% if form_data.bedrooms_check %}checked{% endif %}>
-                <input type="number" id="bedrooms" name="bedrooms" min="1" max="10" step="1" value="{{ form_data.bedrooms|default:1 }}">
+            <!-- Three-column grid for additional filters -->
+            <div class="three-column">
+                <div>
+                    <label for="bedrooms">No of Rooms</label>
+                    <input type="number" id="bedrooms" name="bedrooms" min="0" max="10" step="1" 
+                        value="{{ form_data.bedrooms|default:0 }}" oninput="toggleActive(this)" required>
+                </div>
+            
+                <div>
+                    <label for="bathrooms">No of Bathrooms</label>
+                    <input type="number" id="bathrooms" name="bathrooms" min="0" max="10" step="1" 
+                        value="{{ form_data.bathrooms|default:0 }}" oninput="toggleActive(this)" required>
+                </div>
+            
+                <div>
+                    <label for="floor_area">Floor Area (sqft)</label>
+                    <input type="number" id="floor_area" name="floor_area" min="0" max="10000" step="100" 
+                        value="{{ form_data.floor_area|default:0 }}" oninput="toggleActive(this)" required>
+                </div>
+            
+                <div>
+                    <label for="land_area">Land Area (perch)</label>
+                    <input type="number" id="land_area" name="land_area" min="0" max="10000" step="5" 
+                        value="{{ form_data.land_area|default:0 }}" oninput="toggleActive(this)" required>
+                </div>
             </div>
-
-            <div>
-                <label for="bathrooms">No of Bathrooms</label>
-                <input type="checkbox" class="bathrooms_check" name="bathrooms_check" {% if form_data.bathrooms_check %}checked{% endif %}>
-                <input type="number" id="bathrooms" name="bathrooms" min="1" max="10" step="1" value="{{ form_data.bathrooms|default:1 }}">
-            </div>
-
-            <div>
-                <label for="floor_area">Floor Area (sqft)</label>
-                <input type="checkbox" class="floor_area_check" name="floor_area_check" {% if form_data.floor_area_check %}checked{% endif %}>
-                <input type="number" id="floor_area" name="floor_area" min="100" max="10000" step="1" value="{{ form_data.floor_area|default:100 }}">
-            </div>
-
-            <div>
-                <label for="land_area">Land Area (perch)</label>
-                <input type="checkbox" class="land_area_check" name="land_area_check" {% if form_data.land_area_check %}checked{% endif %}>
-                <input type="number" id="land_area" name="land_area" min="5" max="10000" step="1" value="{{ form_data.land_area|default:5 }}">
-            </div>
-        </div>
+        
+        <script>
+            function toggleActive(input) {
+                const allFields = document.querySelectorAll('input[type="number"]');
+                allFields.forEach(field => {
+                    if (field.value == 0 || field.value === '') {
+                        field.removeAttribute('disabled');
+                    }
+                });
+            }
+        </script>
+        
+        
 
         <h2>Comfort Features</h2>
 
-        <div class="three-column">
+            <div class="three-column">
 
-            <div><label><input type="checkbox" id="selectAll"> Select All</label><br></div>
+                <div><label><input type="checkbox" id="selectAll"> Select All</label><br></div>
 
-            <div>                
+                <div>                
 
-                <label><input type="checkbox" class="feature" name="feature" value="Newly Built" 
-                    {% if 'Newly Built' in form_data.comfort_features %}checked{% endif %}> Newly Built</label><br>
-                <label><input type="checkbox" class="feature" name="feature" value="Air Conditioned" 
-                    {% if 'Air Conditioned' in form_data.comfort_features %}checked{% endif %}> Air Conditioned (A/C)</label><br>
-            </div>
+                    <label><input type="checkbox" class="feature" name="feature" value="Newly Built" 
+                        {% if 'Newly Built' in form_data.comfort_features %}checked{% endif %}> Newly Built</label><br>
+                    <label><input type="checkbox" class="feature" name="feature" value="Air Conditioned" 
+                        {% if 'Air Conditioned' in form_data.comfort_features %}checked{% endif %}> Air Conditioned (A/C)</label><br>
+                </div>
 
-            <div>
-                <label><input type="checkbox" class="feature" name="feature" value="Swimming pool" 
-                    {% if 'Swimming pool' in form_data.comfort_features %}checked{% endif %}> Swimming Pool</label><br>
-                <label><input type="checkbox" class="feature" name="feature" value="Parking Garage" 
-                    {% if 'Parking Garage' in form_data.comfort_features %}checked{% endif %}> Parking Garage</label><br>
-            </div>
+                <div>
+                    <label><input type="checkbox" class="feature" name="feature" value="Swimming pool" 
+                        {% if 'Swimming pool' in form_data.comfort_features %}checked{% endif %}> Swimming Pool</label><br>
+                    <label><input type="checkbox" class="feature" name="feature" value="Parking Garage" 
+                        {% if 'Parking Garage' in form_data.comfort_features %}checked{% endif %}> Parking Garage</label><br>
+                </div>
 
-            
+                
 
-        </div>       
-
-        <input type="submit" value="Get Values">
+            </div>       
+        </div>  
+        <input type="submit" value="Submit">
 
     </form>
 </div>
@@ -166,7 +178,7 @@
 
 
 
-    <h2>Recommended Price Range based on the property values:</h2>
+    <h2>Property Records:</h2>
     {% if prices %}
         <table class='results-table'>
             <thead>
@@ -193,7 +205,7 @@
     {% endif %}
 
 
-    <h2>Advertisments that matches the :</h2>
+    <h2>Individual Records:</h2>
     {% if records %}
         <table class="results-table">
             <thead>
@@ -208,7 +220,7 @@
                     <!--<th>Property Details</th>-->
                     <!--<th>Property Features</th>-->
                     <th>Property Type</th>
-                    <th>Website</th>
+                    <!--<th>Website</th>-->
                 </tr>
             </thead>
             <tbody>
@@ -224,7 +236,7 @@
                         <!--<td>{{ record.property_details }}</td>-->
                         <!--<td>{{ record.property_features }}</td>-->
                         <td>{{ record.property_type }}</td>
-                        <td>{{ record.website }}</td>
+                        <!--<td>{{ record.website }}</td>-->
                     </tr>
                 {% endfor %}
             </tbody>
@@ -386,9 +398,160 @@
             toggleSwitch.addEventListener("change", handleToggle);
         });
         
+
         
     </script>
 
+    <script>
+        // showing additional features and Comfort fearure for hosue property only
+        document.addEventListener("DOMContentLoaded", function () {
+            // Toggle Switch Elements
+            const toggleSwitch = document.querySelector("#toggle-switch-1");
+            const selectedOptionInput = document.getElementById("selected_option");
+            const option1Container = document.getElementById("option1_container");
+            const option2Container = document.getElementById("option2_container");
+        
+            // Property Type Elements
+            const propertyTypeSelect = document.getElementById("property_type");
+            const additionalFiltersContainer = document.querySelector(".three-column11");
+        
+            // Form Elements for Validation
+            const form = document.querySelector("form");
+            const districtSelect = document.getElementById("district");
+            const citySelect = document.getElementById("city");
+            const mapDistrictInput = document.getElementById("map_district");
+            const mapCityInput = document.getElementById("map_city");
+        
+            // Handle toggle switch state
+            const handleToggle = () => {
+                if (toggleSwitch.checked) {
+                    option1Container.style.display = "none";
+                    option2Container.style.display = "block";
+                    selectedOptionInput.value = "Location Map";
+                } else {
+                    option1Container.style.display = "block";
+                    option2Container.style.display = "none";
+                    selectedOptionInput.value = "Dropdown Menu";
+                }
+            };
+        
+            // Handle property type visibility
+            const handlePropertyTypeChange = () => {
+                if (propertyTypeSelect.value === "land") {
+                    additionalFiltersContainer.style.display = "none";
+                } else {
+                    additionalFiltersContainer.style.display = "block";
+                }
+            };
+        
+            // Form submission validation
+            form.addEventListener("submit", function (event) {
+                let isValid = true; // Reset validation status
+        
+                console.log("Form submission initiated.");
+                console.log("Toggle state:", toggleSwitch.checked ? "Map" : "Dropdown");
+        
+                // Validate Property Type selection
+                if (!propertyTypeSelect.value) {
+                    alert("Please select a property type before submitting.");
+                    propertyTypeSelect.classList.add("error");
+                    isValid = false;
+                } else {
+                    propertyTypeSelect.classList.remove("error");
+                }
+        
+                if (toggleSwitch.checked) { 
+                    // Map validation
+                    mapDistrictInput.classList.remove("error");
+                    mapCityInput.classList.remove("error");
+        
+                    if (!mapDistrictInput.value) {
+                        console.log("Map District is missing.");
+                        mapDistrictInput.classList.add("error");
+                        isValid = false;
+                    }
+                    if (!mapCityInput.value) {
+                        console.log("Map City is missing.");
+                        mapCityInput.classList.add("error");
+                        isValid = false;
+                    }
+                } else {
+                    // Dropdown validation
+                    districtSelect.classList.remove("error");
+                    citySelect.classList.remove("error");
+        
+                    if (!districtSelect.value) {
+                        console.log("Dropdown District is missing.");
+                        districtSelect.classList.add("error");
+                        isValid = false;
+                    }
+                    if (!citySelect.value) {
+                        console.log("Dropdown City is missing.");
+                        citySelect.classList.add("error");
+                        isValid = false;
+                    }
+                }
+        
+                // Prevent submission if validation fails
+                if (!isValid) {
+                    console.log("Validation failed.");
+                    event.preventDefault();
+                    return;
+                }
+        
+                console.log("Form is valid, proceeding with submission.");
+            });
+        
+            // Reset error and allow reselection on map inputs
+            const resetMapError = () => {
+                mapDistrictInput.classList.remove("error");
+                mapCityInput.classList.remove("error");
+            };
+        
+            // Reset error and allow reselection on dropdown inputs
+            const resetDropdownError = () => {
+                districtSelect.classList.remove("error");
+                citySelect.classList.remove("error");
+            };
+        
+            // Event listeners to reset errors and allow re-selection
+            mapDistrictInput.addEventListener("input", resetMapError);
+            mapCityInput.addEventListener("input", resetMapError);
+            districtSelect.addEventListener("input", resetDropdownError);
+            citySelect.addEventListener("input", resetDropdownError);
+        
+            // Initialize toggle and property type visibility
+            handleToggle();
+            handlePropertyTypeChange();
+        
+            // Event listeners for user interactions
+            toggleSwitch.addEventListener("change", handleToggle);
+            propertyTypeSelect.addEventListener("change", handlePropertyTypeChange);
+        });
+        
+        
+        
+        
+    </script>
+
+    <script>
+        
+    </script>
+    
+    
+    <script>
+        // map field vaildation
+      
+    </script>
+
+    
+
+    <script>
+      
+    </script>
+
+
+    
           
 
 {% endblock content %}
