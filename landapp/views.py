@@ -132,51 +132,80 @@ def property_view(request):
                 filtered_properties = filtered_properties.filter(land_area__gte=int(land_area))
 
             if comfort_features:
-                feature_queries = Q()
+                feature_queries = Q() 
                 for feature in comfort_features:
                     feature_queries &= Q(property_details__icontains=feature) | Q(property_features__icontains=feature)
                 filtered_properties = filtered_properties.filter(feature_queries)
 
             if filtered_properties:
-                rented_propeties = filtered_properties.filter(title__icontains='Rent')
+                rented_propeties = filtered_properties.filter(property_type__icontains='Rental')
                 if rented_propeties:  # Check if rented_properties is not empty
                     avg_rent_value = sum(
-                        float(''.join(re.findall(r'\d+', str(property.price))))  # Ensure property.price is a string
-                        for property in rented_propeties
-                        if property.price is not None  # Check if property.price is not None
+                        float(re.search(r'[\d,\.]+', str(property.unit_price)).group(0).replace(',', ''))
+                        for property in filtered_properties
+                        if property.unit_price and re.search(r'[\d,\.]+', str(property.unit_price))  # Check for valid numeric value
                     ) / len(rented_propeties)
                 else:
                     avg_rent_value = 0  # Default value if no rented properties found       
 
+            # Extract numeric values safely
+            def extract_numeric_value(value):
+                match = re.search(r'\d[\d,\.]*\d', str(value))  # Match numbers with optional commas/periods
+                if match:
+                    try:
+                        return float(match.group(0).replace(',', ''))  # Remove commas and convert to float
+                    except ValueError:
+                        pass  # Skip invalid numbers
+                return None  # Return None if no valid numeric value found
+            
             if filtered_properties:
+                # Filter out properties with valid numeric unit_price
+                numeric_values = [
+                    extract_numeric_value(property.unit_price)
+                    for property in filtered_properties
+                    if property.unit_price and extract_numeric_value(property.unit_price) is not None
+                ]
+
+                if numeric_values:  # Ensure there are valid numeric values to process
+                    max_value = max(numeric_values)
+                    min_value = min(numeric_values)
+                    avg_value = sum(numeric_values) / len(numeric_values)
+                else:
+                    max_value = min_value = avg_value = None  # Handle the case with no valid numbers
+            else:
+                max_value = min_value = avg_value = None  # Handle the case with no properties
+
+            """if filtered_properties:
                 max_value = max(
-                                    float(''.join(re.findall(r'\d+', str(property.price))))  # Ensure property.price is a string
+                                    float(re.search(r'[\d,\.]+', str(property.unit_price)).group(0).replace(',', ''))
                                     for property in filtered_properties
-                                    if property.price is not None  # Check if property.price is not None
+                                    if property.unit_price and re.search(r'[\d,\.]+', str(property.unit_price))  # Check for valid numeric value
                                 )
                 min_value = min(
-                                    float(''.join(re.findall(r'\d+', str(property.price))))  # Ensure property.price is a string
+                                    float(re.search(r'[\d,\.]+', str(property.unit_price)).group(0).replace(',', ''))
                                     for property in filtered_properties
-                                    if property.price is not None  # Check if property.price is not None
+                                    if property.unit_price and re.search(r'[\d,\.]+', str(property.unit_price))  # Check for valid numeric value
                                 )
                 if filtered_properties:
                     avg_value = sum(
                                     
-                                    float(''.join(re.findall(r'\d+', str(property.price))))  # Ensure property.price is a string
+                                    float(re.search(r'[\d,\.]+', str(property.unit_price)).group(0).replace(',', ''))
                                     for property in filtered_properties
-                                    if property.price is not None  # Check if property.price is not None
+                                    if property.unit_price and re.search(r'[\d,\.]+', str(property.unit_price))  # Check for valid numeric value
 
                                 ) / len(filtered_properties)
                 else:
                     avg_value = 0  # or handle the case differently
 
             
-            
+            print(max_value)"""
+
             max_value = f"RS{max_value: ,.2f}"
             min_value = f"RS{min_value: ,.2f}"
             avg_value = f"RS{avg_value: ,.2f}"
             avg_rent_value = f"Rs{avg_rent_value: ,.2f}"
-        
+
+            print(max_value)
 
             prices = {
                 'max_value':max_value,
@@ -282,36 +311,66 @@ def property_view(request):
                 rented_propeties = filtered_properties.filter(title__icontains='Rent')
                 if rented_propeties:  # Check if rented_properties is not empty
                     avg_rent_value = sum(
-                        float(''.join(re.findall(r'\d+', str(property.price))))  # Ensure property.price is a string
+                        float(''.join(re.findall(r'\d+', str(property.unit_price))))  # Ensure property.price is a string
                         for property in rented_propeties
                         if property.price is not None  # Check if property.price is not None
                     ) / len(rented_propeties)
                 else:
                     avg_rent_value = 0  # Default value if no rented properties found       
 
+            # Extract numeric values safely
+            def extract_numeric_value(value):
+                match = re.search(r'\d[\d,\.]*\d', str(value))  # Match numbers with optional commas/periods
+                if match:
+                    try:
+                        return float(match.group(0).replace(',', ''))  # Remove commas and convert to float
+                    except ValueError:
+                        pass  # Skip invalid numbers
+                return None  # Return None if no valid numeric value found
+            
+            if filtered_properties:
+                # Filter out properties with valid numeric unit_price
+                numeric_values = [
+                    extract_numeric_value(property.unit_price)
+                    for property in filtered_properties
+                    if property.unit_price and extract_numeric_value(property.unit_price) is not None
+                ]
+
+                if numeric_values:  # Ensure there are valid numeric values to process
+                    max_value = max(numeric_values)
+                    min_value = min(numeric_values)
+                    avg_value = sum(numeric_values) / len(numeric_values)
+                else:
+                    max_value = min_value = avg_value = None  # Handle the case with no valid numbers
+            else:
+                max_value = min_value = avg_value = None  # Handle the case with no properties
+
+            """
             if filtered_properties:
                 max_value = max(
-                                    float(''.join(re.findall(r'\d+', str(property.price))))  # Ensure property.price is a string
-                                    for property in filtered_properties
-                                    if property.price is not None  # Check if property.price is not None
+                                    (float(''.join(re.findall(r'\d+\.?\d*', str(property.unit_price)))) 
+                                    for property in filtered_properties 
+                                    if property.unit_price is not None and re.search(r'\d+', str(property.unit_price))),
+                                    default=0  # Use 0 or any appropriate default value
                                 )
                 min_value = min(
-                                    float(''.join(re.findall(r'\d+', str(property.price))))  # Ensure property.price is a string
-                                    for property in filtered_properties
-                                    if property.price is not None  # Check if property.price is not None
+                                    (float(''.join(re.findall(r'\d+\.?\d*', str(property.unit_price)))) 
+                                    for property in filtered_properties 
+                                    if property.unit_price is not None and re.search(r'\d+', str(property.unit_price))),
+                                    default=0  # Use 0 or any appropriate default value
                                 )
                 if filtered_properties:
                     avg_value = sum(
                                     
-                                    float(''.join(re.findall(r'\d+', str(property.price))))  # Ensure property.price is a string
-                                    for property in filtered_properties
-                                    if property.price is not None  # Check if property.price is not None
+                                    (float(''.join(re.findall(r'\d+\.?\d*', str(property.unit_price)))) 
+                                    for property in filtered_properties 
+                                    if property.unit_price is not None and re.search(r'\d+', str(property.unit_price))),
+                                    default=0  # Use 0 or any appropriate default value
 
                                 ) / len(filtered_properties)
                 else:
                     avg_value = 0  # or handle the case differently
-
-            
+            """            
             
             max_value = f"RS{max_value: ,.2f}"
             min_value = f"RS{min_value: ,.2f}"

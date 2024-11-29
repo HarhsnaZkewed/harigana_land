@@ -77,6 +77,8 @@
         <div id="option2_container" class="option2-container">
                                         
                         
+            <div id="map"></div>    
+
                         <input type="text" id="latitude" name="latitude" hidden>
                         
                         <input type="text" id="longitude" name="longitude" hidden>
@@ -87,7 +89,7 @@
                         <input type="text" id="map_city" name="map_city" readonly><br><br>                                
                 
             
-                <div id="map"></div>
+                
            
         </div>
         
@@ -96,6 +98,8 @@
             <select id="property_type" name="property_type" required>
                 <option value="house" {% if form_data.property_type == "house" %}selected{% endif %}>House</option>
                 <option value="land" {% if form_data.property_type == "land" %}selected{% endif %}>Land</option>
+                <option value="apartment" {% if form_data.property_type == "apartment" %}selected{% endif %}>Apartment</option>
+                <option value="rental" {% if form_data.property_type == "rental" %}selected{% endif %}>Rental Propeties</option>
                 
             </select>
         </div>
@@ -119,13 +123,13 @@
             <div>
                 <label for="floor_area">Floor Area (sqft)</label>
                 <input type="checkbox" class="floor_area_check" name="floor_area_check" {% if form_data.floor_area_check %}checked{% endif %}>
-                <input type="number" id="floor_area" name="floor_area" min="100" max="10000" step="10" value="{{ form_data.floor_area|default:100 }}">
+                <input type="number" id="floor_area" name="floor_area" min="100" max="10000" step="1" value="{{ form_data.floor_area|default:100 }}">
             </div>
 
             <div>
                 <label for="land_area">Land Area (perch)</label>
                 <input type="checkbox" class="land_area_check" name="land_area_check" {% if form_data.land_area_check %}checked{% endif %}>
-                <input type="number" id="land_area" name="land_area" min="5" max="10000" step="5" value="{{ form_data.land_area|default:5 }}">
+                <input type="number" id="land_area" name="land_area" min="5" max="10000" step="1" value="{{ form_data.land_area|default:5 }}">
             </div>
         </div>
 
@@ -154,7 +158,7 @@
 
         </div>       
 
-        <input type="submit" value="Details">
+        <input type="submit" value="Get Values">
 
     </form>
 </div>
@@ -162,7 +166,7 @@
 
 
 
-    <h2>Property Records:</h2>
+    <h2>Recommended Price Range based on the property values:</h2>
     {% if prices %}
         <table class='results-table'>
             <thead>
@@ -189,7 +193,7 @@
     {% endif %}
 
 
-    <h2>Individual Records:</h2>
+    <h2>Advertisments that matches the :</h2>
     {% if records %}
         <table class="results-table">
             <thead>
@@ -204,7 +208,7 @@
                     <!--<th>Property Details</th>-->
                     <!--<th>Property Features</th>-->
                     <th>Property Type</th>
-                    <!--<th>Website</th>-->
+                    <th>Website</th>
                 </tr>
             </thead>
             <tbody>
@@ -216,11 +220,11 @@
                         <td>{{ record.bathrooms }}</td>
                         <td>{{ record.floor_area }}</td>
                         <td>{{ record.land_area }}</td>
-                        <td>{{ record.price }}</td>
+                        <td>{{ record.unit_price }}</td>
                         <!--<td>{{ record.property_details }}</td>-->
                         <!--<td>{{ record.property_features }}</td>-->
                         <td>{{ record.property_type }}</td>
-                        <!--<td>{{ record.website }}</td>-->
+                        <td>{{ record.website }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

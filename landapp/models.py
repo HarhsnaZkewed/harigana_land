@@ -16,6 +16,8 @@ class PropertyDetails(models.Model):
     property_features = models.CharField(max_length=100)
     property_type = models.CharField(max_length=100)
     website = models.CharField(max_length=100)
+    perches = models.CharField(max_length=100)
+    unit_price = models.CharField(max_length=100)
 
 
     class Meta:
