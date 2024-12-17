@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags %}
 {% block content %}
 
 <div class="container mt-5">
@@ -23,31 +22,136 @@
         </div>
     </div>
 
-    <!-- Vehicle Form -->
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <form method="POST" class="form-horizontal">
+                    <form id="vehicle_valuation" method="POST" class="form-horizontal" action="{% url 'vehicle_valuation'%}">
                         {% csrf_token %}
+                        
                         <div class="form-row row mb-3">
+                            
                             <div class="form-group col-md-4 mb-3">
-                                {{ form.make|as_crispy_field }}
+                                <label for="make">Make</label>
+                                <select id="make" name="make" class="form-control" required>
+                                    <option value="">-- Select Vehicle Manufacturer --</option>
+                                    {% for make in makes %}
+                                        <option value="{{ make.id }}" 
+                                                {% if form_data.make == make.id %}selected{% endif %}>
+                                            {{ make.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
                             </div>
+                            
+
                             <div class="form-group col-md-4 mb-3">
-                                {{ form.model|as_crispy_field }}
+                                <label for="model">Model</label>
+                                <select id="model" name="model" class="form-control" required>
+                                    <option value="">-- Select Model --</option>
+                                    {% for model in models %}
+                                        <option value="{{ model.id }}" 
+                                                {% if form_data.model == model.id %}selected{% endif %}>
+                                            {{ model.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
                             </div>
+                            
+
                             <div class="form-group col-md-4 mb-3">
-                                {{ form.year|as_crispy_field }}
+                                <label for="year">Year</label>
+                                <select id="year" name="year" class="form-control">
+                                    {% for value, display in year_dropdown %}
+                                        <option value="{{ value }}" {% if form_data.year == value %}selected{% endif %}>
+                                            {{ display }}
+                                        </option>
+                                    {% endfor %}
+                                </select>                                
                             </div>
+                            
+
                         </div>
+
                         <div class="form-group mb-3">
-                            {{ form.purpose|as_crispy_field }}
+                            
+                            <div class="form-group mb-3 text-center">
+                                <label>Purpose</label>
+                                <div class="d-flex justify-content-center">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="purpose" id="purposeBuying" value="buying" {% if form_data.purpose == 'buying' %}checked{% endif %}>
+                                        <label class="form-check-label" for="purposeBuying">Buying</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="purpose" id="purposeSelling" value="selling" {% if form_data.purpose == 'selling' %}checked{% endif %}>
+                                        <label class="form-check-label" for="purposeSelling">Selling</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
                         </div>
+                        
+                        <hr>
+                        <!--
+                        <p class="text-muted">Dive more about the vehicle you are finding !!!!!!!!!!!!</p>
+                        
+                        <div class="row">
+                            <div class="col-12 col-md-3">
+                                <label for="mileage" class="col-form-label">Mileage (km):</label>
+                                <input type="number" name="mileage" id="mileage" class="form-control" value="{{ mileage_label }}" required>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <label for="engine_capacity" class="col-form-label">Engine (cc):</label>
+                                <input type="number" name="engine_capacity" id="engine_capacity" class="form-control" value="{{ engine_capacity_label }}" required>
+                            </div>
+                            <div class="col-12 col-md-3">
+                              <label for="gear" class="col-form-label">Gear:</label>
+                              <select name="gear" class="form-select" id="gear" required>
+                                <option></option>
+                                <option value="Manual" {% if gear == 'Manual' %}selected{% endif %}>Manual</option>
+                                <option value="Automatic" {% if gear == 'Automatic' %}selected{% endif %}>Automatic</option>
+                                <option value="Tiptronic" {% if gear == 'Tiptronic' %}selected{% endif %}>Tiptronic</option>
+                              </select>
+                            </div>
+                            <div class="col-12 col-md-3">
+                              <label for="fuel" class="col-form-label">Fuel Type:</label>
+                              <select name="fuel" class="form-select" id="fuel" required>
+                                <option></option>
+                                <option value="Petrol" {% if fuel == 'Petrol' %}selected{% endif %}>Petrol</option>
+                                <option value="Hybrid" {% if fuel == 'Hybrid' %}selected{% endif %}>Hybrid</option>
+                                <option value="Diesel" {% if fuel == 'Diesel' %}selected{% endif %}>Diesel</option>
+                                <option value="Electric" {% if fuel == 'Electric' %}selected{% endif %}>Electric</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-12 col-md-4">
+                                <label for="owners" class="col-form-label">Previous Owners:</label>
+                                <input type="number" name="owners" id="owners" class="form-control" value="{{ owners }}">
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label for="selling_condition" class="col-form-label">Condition:</label>
+                                <select name="selling_condition" class="form-select" id="selling_condition">
+                                    <option></option>
+                                    <option value="Mint" {% if selling_condition == 'Mint' %}selected{% endif %}>Mint</option>
+                                    <option value="Good" {% if selling_condition == 'Good' %}selected{% endif %}>Good</option>
+                                    <option value="Fair" {% if selling_condition == 'Fair' %}selected{% endif %}>Fair</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-4">
+                              <label for="modification" class="col-form-label">Modification:</label>
+                              <select name="modification" class="form-select" id="modification">
+                                  <option></option>
+                                  <option value="Modified" {% if modification == 'Modified' %}selected{% endif %}>Modified</option>
+                                  <option value="Not Modified" {% if modification == 'Not Modified' %}selected{% endif %}>Not Modified</option>
+                              </select>
+                            </div>           
+                          </div>
+                        -->
                         <div class="form-group text-center">
-                          <button type="submit" class="btn btn-primary btn-block">
-                            <i class="fa fa-search"></i> Check Valuation
-                        </button>
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fa fa-search"></i> Check Valuation
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -56,43 +160,6 @@
         </div>
     </div>
 
-    <!-- Information Section -->
-     <!--
-    <div class="text-center mt-4">
-        <h4 class="fw-bold">Get a Current Market Value for Your Car</h4>
-        <p class="text-muted">Here’s what you’ll need to provide:</p>
-    </div>
-
-    <div class="row text-center mt-4">
-        <div class="col-md-4 mb-3">
-            <div class="d-flex align-items-start">
-                <i class="fa-solid fa-circle-check fa-xl me-2"></i>
-                <div>
-                    <b>Select your car</b>
-                    <p>Enter the make, model, and year of the vehicle.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="d-flex align-items-start">
-                <i class="fa-solid fa-circle-check fa-xl me-2"></i>
-                <div>
-                    <b>Tell us about the car's condition</b>
-                    <p>Provide the mileage, vehicle condition, and any additional options the vehicle is equipped with.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="d-flex align-items-start">
-                <i class="fa-solid fa-circle-check fa-xl me-2"></i>
-                <div>
-                    <b>Evaluate your car's resale value</b>
-                    <p>Determine your target price for your vehicle.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    -->
 
     <!-- No Data Message -->
     {% if no_data %}
@@ -102,6 +169,37 @@
         </div>
     </div>
     {% endif %}
+
+    <div class="container mt-5">
+        <h3>Vehicle Price</h3>
+        <hr>
+        {% if stats %}
+            
+                <h6>Year : {{ stats.year }}</h6>
+                <hr>
+                <h6>Average Price (Rs.) : {{ stats.format_valuation_amount }}</h6>
+                <hr>
+                <h6>Max Price (Rs.) :     {{ stats.format_maximum_amount }}</h6>
+                <hr>
+                <h6>Min Price(Rs.) :      {{ stats.format_minimum_amount }}</h6> 
+                <hr>
+                <hr>
+            
+        {% else %}
+                {% for stat in closest_stats %}
+
+                    <h6>Year : {{ stat.year }}</h6>
+                    <hr>
+                    <h6>Average Price (Rs.) : {{ stat.format_valuation_amount }}</h6>
+                    <hr>
+                    <h6>Max Price (Rs.) :     {{ stat.format_maximum_amount }}</h6>
+                    <hr>
+                    <h6>Min Price(Rs.) :      {{ stat.format_minimum_amount }}</h6> 
+                    <hr>
+                    <hr>
+                {% endfor %}
+        {% endif %}
+    </div>
 
 </div>
 
@@ -126,60 +224,40 @@
 </style>
 
 <script>
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; cookies.length > i; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
+    document.getElementById('make').addEventListener('change', function () {
+        const makeId = this.value; // Get selected Make ID
+        const modelDropdown = document.getElementById('model');
+        
+        // Clear existing options (ensure only relevant models appear)
+        modelDropdown.innerHTML = '<option value="">-- Select Model --</option>';
+        
+        if (makeId) {
+            // Fetch models for the selected make via AJAX
+            fetch(`/get-models/${makeId}/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Populate the dropdown with the new models
+                    data.models.forEach(model => {
+                        const option = document.createElement('option');
+                        option.value = model.id;
+                        option.textContent = model.name;
+                        modelDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching models:', error);
+                    alert('Failed to load models. Please try again.');
+                });
         }
-        return cookieValue;
-    }
-    const csrftoken = getCookie('csrftoken');
+    });
+</script>
 
-    let make_field = document.getElementById("id_make");
-    let model_field = document.getElementById("id_model");
-
-    make_field.addEventListener("change", pickState);
-
-    function pickState(e) {
-        make_id = e.target.value;
-        const data = { user_id: make_id };
-        let url = "{% url 'models' %}";
-
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
-            },
-            body: JSON.stringify(data),
-        })
-        .then(response => response.json())
-        .then(data => {
-            model_field.innerHTML = `<option value="" selected>---------------</option>`;
-            for (let i = 0; data.length > i; i++) {
-                model_field.innerHTML += `<option value="${data[i]["id"]}">${data[i]["name"]}</option>`;
-            }
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-    }
-
-    let input = document.getElementById("id_name");
-    let select = document.getElementsByTagName("select");
-
-    input.classList.add("form-control");
-
-    for (let i = 0; select.length > i; i++) {
-        select[i].classList.add("form-select");
-    }
+<script>
 </script>
 
 {% endblock content %}

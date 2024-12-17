@@ -8,10 +8,20 @@
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmGsEqTlt0hvk0NLuE0F-6WMjlIiRp5qE&callback=initMap"></script>
 </head>
 
+</br>
 
 <div class="form-container">
     
     <h2 class="headertekst">Property Valuation</h2>
+
+    {% if messages %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {% for message in messages %}
+        <strong>{{ message }}</strong>
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
 
     <form id="valuation_form" method="POST" action="{% url 'property_view' %}">
         {% csrf_token %}
@@ -170,7 +180,12 @@
 
             </div>       
         </div>  
+        <!--
         <input type="submit" value="Submit">
+        -->
+        <button type="submit" class="btn btn-primary btn-block">
+            <i class="fa fa-search"></i> Check Valuation
+        </button>
 
     </form>
 </div>
@@ -535,7 +550,15 @@
     </script>
 
     <script>
+        document.getElementById("valuation_form").addEventListener("submit", function (event) {
+            const latitude = document.getElementById("latitude").value;
+            const longitude = document.getElementById("longitude").value;
         
+            if (document.getElementById("selected_option").value === "Location Map" && (!latitude || !longitude)) {
+                alert("Please select a location on the map.");
+                event.preventDefault();
+            }
+        });        
     </script>
     
     

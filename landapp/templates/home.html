@@ -83,7 +83,44 @@
         </div>
         <br>
         <br>
-        <a  href="{% url 'valuation' %}"> 
+        <a  href="{% url 'vehicle_valuation' %}"> 
+            <button type="button" class="btn btn-primary">Start Valuation</button>
+        </a>
+        
+        <br>
+    </div>
+    <hr>
+
+    <div class="row content-section text-center">
+        <div class="col-12">
+            <h2 class="fw-bold">How It Works</h2>
+        </div>
+        <br><br><br>
+        <div class="col-md-4 col-6">
+            <div class="feature-icon mb-3">
+                <i class="fa-solid fa-car fa-xl"></i>
+            </div>
+            <h5 class="fw-bold">Enter Vehicle Details</h5>
+            <p>Provide information about your car, including make, model, year, mileage, gear type, and fuel type.</p>
+        </div>
+        <div class="col-md-4 col-6">
+            <div class="feature-icon mb-3">
+                <i class="fas fa-calculator fa-xl icon-responsive"></i>
+            </div>
+            <h5 class="fw-bold">Get Instant Valuation</h5>
+            <p>Our system processes the data and delivers an accurate valuation based on current market conditions.</p>
+        </div>
+        <div class="col-md-4 col-6">
+            <div class="feature-icon mb-3">
+                <i class="fas fa-handshake fa-xl icon-responsive"></i>
+            </div>
+            <h5 class="fw-bold">Make Informed Decisions</h5>
+            <p>Use the valuation to set a competitive price if selling or to negotiate a fair deal if buying.</p>
+            <br>
+        </div>
+        <br>
+        <br>
+        <a  href="{% url 'vehicle_valuation' %}"> 
             <button type="button" class="btn btn-primary">Start Valuation</button>
         </a>
         
