@@ -4,16 +4,16 @@
 <div class="container">
     <div class="content-section text-center mt-5">
         <h2 class="fw-bold">Welcome to Hari Gaana</h2>
-        <p>At Hari Gaana, we empower you with accurate, real-time valuations for your vehicle. Whether you're selling your car or looking to buy, our platform provides the latest market data to ensure you make informed decisions.</p>
+        <p>At Hari Gaana, we empower you with accurate, real-time valuations for your vehicle & Real estate. Whether you're selling your car or Real-estate looking to buy, our platform provides the latest market data to ensure you make informed decisions.</p>
     </div>
     <div class="content-section mt-5">
-        <h4 class="fw-bold">Discover Your Car's Worth</h4>
-        <p>Thinking about selling your car? With Hari Gaana, you can easily find out its current market value. Simply enter your car's make, model, and year to get an instant valuation. Our advanced algorithm analyzes recent sales data and market trends to give you the most accurate estimate.</p>
+        <h4 class="fw-bold">Discover Your Car's OR Real-estate Worth</h4>
+        <p>Thinking about selling your car or property? With Hari Gaana, you can easily find out its current market value. Simply enter your car’s make, model, and year, or your property’s location, type, and size to get an instant valuation. Our advanced algorithm analyzes recent sales data and market trends to provide you with the most accurate estimate.</p>
     </div>
 
     <div class="content-section mt-5">
         <h4 class="fw-bold">For Buyers</h4>
-        <p>Planning to buy a car? Hari Gaana is your go-to resource for checking the current market values of specific models. Our platform helps you make well-informed decisions by providing comprehensive pricing data and trends.</p>
+        <p>Planning to buy a car or property? Hari Gaana is your go-to resource for checking the current market values of specific vehicles or real estate. Our platform helps you make well-informed decisions by providing comprehensive pricing data and trends.</p>
     </div>
     <br>
     <hr>
@@ -53,10 +53,11 @@
     </div>
     <hr>
 
-    <!-- How It Works Section -->
+    <!--
+        
     <div class="row content-section text-center">
         <div class="col-12">
-            <h2 class="fw-bold">How It Works</h2>
+            <h2 class="fw-bold"> For Vehciles How It Works</h2>
         </div>
         <br><br><br>
         <div class="col-md-4 col-6">
@@ -83,7 +84,7 @@
         </div>
         <br>
         <br>
-        <a  href="{% url 'vehicle_valuation' %}"> 
+        <a  href="{% url 'valuation_home' %}"> 
             <button type="button" class="btn btn-primary">Start Valuation</button>
         </a>
         
@@ -93,15 +94,15 @@
 
     <div class="row content-section text-center">
         <div class="col-12">
-            <h2 class="fw-bold">How It Works</h2>
+            <h2 class="fw-bold">For Real-estate How It Works</h2>
         </div>
         <br><br><br>
         <div class="col-md-4 col-6">
             <div class="feature-icon mb-3">
                 <i class="fa-solid fa-car fa-xl"></i>
             </div>
-            <h5 class="fw-bold">Enter Vehicle Details</h5>
-            <p>Provide information about your car, including make, model, year, mileage, gear type, and fuel type.</p>
+            <h5 class="fw-bold">Enter Real-Estate</h5>
+            <p>Provide information about your property, including location, type, size, number of bedrooms, number of bathrooms, and any additional features.</p>
         </div>
         <div class="col-md-4 col-6">
             <div class="feature-icon mb-3">
@@ -120,12 +121,70 @@
         </div>
         <br>
         <br>
-        <a  href="{% url 'vehicle_valuation' %}"> 
+        <a  href="{% url 'property_valuation' %}"> 
             <button type="button" class="btn btn-primary">Start Valuation</button>
         </a>
         
         <br>
     </div>
+    
+    
+    -->
+    <div class="row content-section text-center">
+        <div class="col-12">
+            <h2 class="fw-bold">How It Works</h2>
+            <p class="text-muted">Whether you're buying or selling vehicles or real estate, our process ensures a smooth and efficient experience tailored to your needs.</p>
+        </div>
+        <br><br><br>
+    
+        <!-- Step 1: Enter Your Details -->
+        <div class="col-md-4 col-6">
+            <div class="feature-icon mb-3">
+                <i class="fa-solid fa-info-circle fa-xl"></i>
+            </div>
+            <h5 class="fw-bold">Enter Your Details</h5>
+            <p>Start by providing essential information about your car (make, model, year, mileage, gear type, fuel type) or your property (location, size, type, unique features, and amenities).</p>
+            <p class="text-muted">For vehicles: Include details like service history for a more precise valuation.<br>For properties: Highlight key features like nearby landmarks, schools, or public transport.</p>
+        </div>
+    
+        <!-- Step 2: Get Accurate Valuation -->
+        <div class="col-md-4 col-6">
+            <div class="feature-icon mb-3">
+                <i class="fas fa-calculator fa-xl icon-responsive"></i>
+            </div>
+            <h5 class="fw-bold">Get Accurate Valuation</h5>
+            <p>Our cutting-edge algorithms analyze your input and compare it against real-time market trends to deliver a reliable valuation, whether for a car or a property.</p>
+            <p class="text-muted">Receive insights such as comparable listings, recent sales, and market demand to better understand your asset’s worth.</p>
+        </div>
+    
+        <!-- Step 3: Make Smarter Decisions -->
+        <div class="col-md-4 col-6">
+            <div class="feature-icon mb-3">
+                <i class="fas fa-chart-line fa-xl icon-responsive"></i>
+            </div>
+            <h5 class="fw-bold">Make Smarter Decisions</h5>
+            <p>Use the valuation to confidently set a competitive price for selling or to negotiate a better deal when buying. Maximize value by leveraging our expert insights.</p>
+            <p class="text-muted">For sellers: Stand out by setting the right price.<br>For buyers: Ensure you’re paying a fair value.</p>
+        </div>
+    
+        <!-- Step 4: Take Action -->
+        <div class="col-md-12 col-12">
+            <div class="feature-icon mb-3">
+                <i class="fas fa-check-circle fa-xl icon-responsive"></i>
+            </div>
+            <h5 class="fw-bold">Take Action</h5>
+            <p>Finalize your decision with confidence. Connect with trusted buyers, sellers, or agents directly through our platform for a seamless transaction experience.</p>
+        </div>
+    
+        <!-- Call-to-Action Button -->
+        <div class="col-12 mt-4">
+            <a href="{% url 'valuation_home' %}">
+                <button type="button" class="btn btn-primary btn-lg">Start Your Valuation Now!</button>
+            </a>
+        </div>
+        <br>
+    </div>
+    
 
     <br>
 </div>

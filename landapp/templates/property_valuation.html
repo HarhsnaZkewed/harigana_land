@@ -10,9 +10,20 @@
 
 </br>
 
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">What is Your Real-estate Worth?</h2>
+                <p class="text-muted">Find the current market value of your real-estate by selecting the real-estate details below.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="form-container">
     
-    <h2 class="headertekst">Property Valuation</h2>
+    
 
     {% if messages %}
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -23,7 +34,7 @@
     </div>
     {% endif %}
 
-    <form id="valuation_form" method="POST" action="{% url 'property_view' %}">
+    <form id="valuation_form" method="POST" action="{% url 'property_valuation' %}">
         {% csrf_token %}
 
 
@@ -121,25 +132,30 @@
                     <label for="bedrooms">No of Rooms</label>
                     <input type="number" id="bedrooms" name="bedrooms" min="0" max="10" step="1" 
                         value="{{ form_data.bedrooms|default:0 }}" oninput="toggleActive(this)" required>
+                    <input type="hidden" id="bedrooms_check" name="bedrooms_check" value="{{ form_data.bedrooms_check|default:'off' }}">
                 </div>
             
                 <div>
                     <label for="bathrooms">No of Bathrooms</label>
                     <input type="number" id="bathrooms" name="bathrooms" min="0" max="10" step="1" 
                         value="{{ form_data.bathrooms|default:0 }}" oninput="toggleActive(this)" required>
+                    <input type="hidden" id="bathrooms_check" name="bathrooms_check" value="{{ form_data.bathrooms_check|default:'off' }}">
                 </div>
             
                 <div>
                     <label for="floor_area">Floor Area (sqft)</label>
-                    <input type="number" id="floor_area" name="floor_area" min="0" max="10000" step="100" 
+                    <input type="number" id="floor_area" name="floor_area" min="0" max="10000" step="1" 
                         value="{{ form_data.floor_area|default:0 }}" oninput="toggleActive(this)" required>
+                    <input type="hidden" id="floor_area_check" name="floor_area_check" value="{{ form_data.floor_area_check|default:'off' }}">
                 </div>
-            
+                
                 <div>
                     <label for="land_area">Land Area (perch)</label>
-                    <input type="number" id="land_area" name="land_area" min="0" max="10000" step="5" 
+                    <input type="number" id="land_area" name="land_area" min="0" max="10000" step="1" 
                         value="{{ form_data.land_area|default:0 }}" oninput="toggleActive(this)" required>
+                    <input type="hidden" id="land_area_check" name="land_area_check" value="{{ form_data.land_area_check|default:'off' }}">
                 </div>
+                
             </div>
         
         <script>
@@ -561,10 +577,18 @@
         });        
     </script>
     
-    
+    <!--This script will make sure that the chek condition is changed to on if the values are more than 0-->
     <script>
-        // map field vaildation
-      
+        function toggleActive(input) {
+            const checkField = document.getElementById(`${input.id}_check`);
+            if (parseInt(input.value) > 0) {
+                checkField.value = 'on';
+                console.log(`Set ${input.id}_check to 'on'`);
+            } else {
+                checkField.value = 'off';
+                console.log(`Set ${input.id}_check to 'off'`);
+            }
+        }                 
     </script>
 
     

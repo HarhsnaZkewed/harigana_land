@@ -12,6 +12,7 @@ from django.contrib import messages
 from django.http import HttpResponseServerError
 import pandas as pd
 
+
 #from .dmt_automation import DMTautomation  # Import your automation script
 
 
@@ -48,11 +49,13 @@ def home(request):
     
     return render(request, 'home.html')
 
+
 def about(request):
     return render(request, 'about.html')
 
-def result(request):
-    return render(request, 'result')
+
+def valuation_home(request):
+    return render(request, 'valuation_home.html')
 #-------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -126,14 +129,25 @@ def property_view(request):
             city_name = map_city
 
         property_type = request.POST.get('property_type', '').strip()
+
+
+        #These check fields were used to track wheather the thier respective fields have been changed from 0 
         bedrooms = request.POST.get('bedrooms', '')
-        bedrooms_check = request.POST.get('bedrooms_check') == 'on'
+        bedrooms_check = request.POST.get('bedrooms_check')
+  
+
         bathrooms = request.POST.get('bathrooms', '')
-        bathrooms_check = request.POST.get('bathrooms_check') == 'on'
+        bathrooms_check = request.POST.get('bathrooms_check')
+        
+
         floor_area = request.POST.get('floor_area', '')
-        floor_area_check = request.POST.get('floor_area_check') == 'on'
+        floor_area_check = request.POST.get('floor_area_check')
+        
+
         land_area = request.POST.get('land_area', '')
-        land_area_check = request.POST.get('land_area_check') == 'on'
+        land_area_check = request.POST.get('land_area_check')       
+
+
         comfort_features = request.POST.getlist('feature', [])
 
         # Update form_data with submitted values
@@ -181,16 +195,16 @@ def property_view(request):
         if property_type:
             filtered_properties = filtered_properties.filter(property_type__icontains=property_type)
 
-        if bedrooms_check and bedrooms.isdigit():
+        if int(bedrooms)>0:
             filtered_properties = filtered_properties.filter(bedrooms=int(bedrooms))
 
-        if bathrooms_check and bathrooms.isdigit():
+        if int(bathrooms)>0:
             filtered_properties = filtered_properties.filter(bathrooms=int(bathrooms))
 
-        if floor_area_check and floor_area.isdigit():
-            filtered_properties = filtered_properties.filter(floor_area__gte=int(floor_area))
-
-        if land_area_check and land_area.isdigit():
+        if int(floor_area)>0:
+            filtered_properties = filtered_properties.filter(floor_area__gte=str(floor_area) )
+                    
+        if int(land_area)>0:
             filtered_properties = filtered_properties.filter(land_area__gte=int(land_area))
 
         if comfort_features:
@@ -372,6 +386,14 @@ def vehicle_valuation(request):
 
         year = request.POST.get('year')
         purpose = request.POST.get('purpose')
+
+        mileage = request.POST.get('mileage')
+        engine_capacity = request.POST.get('engine_capacity')
+        gear = request.POST.get('fuel')
+        fuel = request.POST.get('fuel')
+        owners = request.POST.get('owners')
+        selling_condition = request.POST.get('selling_condition')
+        modification = request.POST.get('modification')
 
         # Update form_data with selected values
         form_data.update({

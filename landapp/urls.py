@@ -7,9 +7,10 @@ urlpatterns = [
     #URL directs for normal pages
     path('',views.home, name='home'),
     path('about/', views.about, name ="about"),
+    path('valuation_home/', views.valuation_home, name="valuation_home"),
 
     #URL directs for the property valuations
-    path('property_valuation/', views.property_view, name='property_view'),
+    path('property_valuation/', views.property_view, name='property_valuation'),
     path('get-cities/<int:district_id>/', views.get_cities, name='get_cities'),
    
     #URL directs for the vehicle valuations

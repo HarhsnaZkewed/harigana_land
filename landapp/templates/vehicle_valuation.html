@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
+{% load static %}
+
+<head>
+    <!-- Link to the styles.css file in the static directory -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    
+</head>
 
 <div class="container mt-5">
     <!-- Status Message -->
@@ -92,7 +99,7 @@
                         </div>
                         
                         <hr>
-                        <!--
+                        
                         <p class="text-muted">Dive more about the vehicle you are finding !!!!!!!!!!!!</p>
                         
                         <div class="row">
@@ -147,7 +154,7 @@
                               </select>
                             </div>           
                           </div>
-                        -->
+                        
                         <div class="form-group text-center">
                             <button type="submit" class="btn btn-primary btn-block">
                                 <i class="fa fa-search"></i> Check Valuation
