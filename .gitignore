@@ -26,6 +26,8 @@ staticfiles/
 
 # Ignore the text file
 html original.txt
+dbcheck_vehicles.py
+dbcheck_real_estate.py
 
 # Byte-compiled files
 *.py[cod]

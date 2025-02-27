@@ -13,33 +13,40 @@
 
     <!-- Step 1: Enter Your Details -->
     <!-- Step 1: Enter Your Details -->
-    <div class="row">
-        <!-- Step 1 Column -->
-        <div class="col-md-6 col-12 mb-4">
-            <div class="feature-icon mb-3">
-                <i class="fa-solid fa-info-circle fa-xl"></i>
+    <div class="container d-flex flex-column align-items-center mt-5">
+        <div class="row text-center w-120">
+            <!-- Step 1 Column -->
+            <div class="col-12 mb-4 d-flex flex-column align-items-center">
+                <div class="feature-icon mb-3">
+                    <i class="fa-solid fa-info-circle fa-xl"></i>
+                </div>
+                <a href="{% url 'vehicle_valuation' %}">
+                    <button type="button" class="btn btn-primary btn-lg d-flex flex-column align-items-center">
+                        <img width="170px" height="140px" src="{% static 'car.png' %}" alt="Vehicle Icon" class="btn-icon mb-2">
+                        Start Your Vehicle Valuation Now!
+                    </button>
+                </a>
             </div>
-            <a href="{% url 'vehicle_valuation' %}">
-                <button type="button" class="btn btn-primary btn-lg">
-                    <img width="130px" height="100px" src="{% static "car.png"%}" alt="Vehicle Icon" class="btn-icon"><br>
-                    Start Your Vehicle Valuation Now!
-                </button>
-            </a>
-        </div>
-
-        <!-- Step 2 Column -->
-        <div class="col-md-6 col-12 mb-4">
-            <div class="feature-icon mb-3">
-                <i class="fas fa-chart-line fa-xl icon-responsive"></i>
+    
+            <!-- Step 2 Column -->
+            <div class="col-12 mb-4 d-flex flex-column align-items-center">
+                <div class="feature-icon mb-3">
+                    <i class="fas fa-chart-line fa-xl icon-responsive"></i>
+                </div>
+                <a href="{% url 'property_valuation' %}">
+                    <button type="button" class="btn btn-primary btn-lg d-flex flex-column align-items-center">
+                        <img width="150px" height="140px" src="{% static 'house.png' %}" alt="House Icon" class="btn-icon mb-2">
+                        Start Your Real-Estate Valuation Now!
+                    </button>
+                </a>
             </div>
-            <a href="{% url 'property_valuation' %}">
-                <button type="button" class="btn btn-primary btn-lg">
-                    <img width="100px" height="100px" src="{% static "house.png"%}" alt="Vehicle Icon" class="btn-icon"><br>
-                    Start Your Real-Estate Valuation Now!
-                </button>
-            </a>
         </div>
     </div>
+    
+    
+    
+</div>
+
 
     <br>
 </div>
