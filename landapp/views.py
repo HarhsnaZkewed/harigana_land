@@ -388,12 +388,19 @@ def vehicle_valuation(request):
         purpose = request.POST.get('purpose')
 
         mileage = request.POST.get('mileage')
+        #print(mileage)
         engine_capacity = request.POST.get('engine_capacity')
+        #print(engine_capacity)
         gear = request.POST.get('fuel')
+        #print(gear)
         fuel = request.POST.get('fuel')
+        #print(fuel)
         owners = request.POST.get('owners')
+        #print(owners)
         selling_condition = request.POST.get('selling_condition')
+        #print(selling_condition)
         modification = request.POST.get('modification')
+        #print(modification)
 
         # Update form_data with selected values
         form_data.update({
@@ -405,62 +412,97 @@ def vehicle_valuation(request):
 
         print(make_name, model_name, year)
 
-        filtered_vehicles = None
+        # Query with case-insensitive regex
+        query = {
+            'make': {'$regex': f'^{make_name}$', '$options': 'i'},
+            'model': {'$regex': f'^{model_name}$', '$options': 'i'},
+            'year': year  # Ensure year matches data type in DB
+        }
+
+        # Check if initial query matches any documents
         if make_name and model_name and year:
-            filtered_vehicles = collection.find({'make': make_name, 'model': model_name, 'year': year})
+            if collection.count_documents(query) == 0:
+                print("No matching vehicles found.")
+            else:
+                # Continue refining the query instead of resetting it
+                if mileage:
+                    mileage_tolerance = 5000
+                    query['mileage'] = {'$gte': int(mileage) - mileage_tolerance, '$lte': int(mileage) + mileage_tolerance}
 
-        if filtered_vehicles:
-            df = DataFrame(list(filtered_vehicles))
-            if not df.empty:
-                valuation_amount = round(df['price'].astype(float).mean(), -4)
-                format_valuation_amount = "{:,.2f}".format(valuation_amount)
+                if engine_capacity:
+                    engine_capacity_tolerance = 200
+                    query['engine_capability'] = {'$gte': int(engine_capacity) - engine_capacity_tolerance, '$lte': int(engine_capacity) + engine_capacity_tolerance}
 
-                maximum_amount = df['price'].astype(float).max()
-                format_maximum_amount = "{:,.2f}".format(maximum_amount)
+                if gear:
+                    query['gear'] = gear
 
-                minimum_amount = df['price'].astype(float).min()
-                format_minimum_amount = "{:,.2f}".format(minimum_amount)
+                if fuel:
+                    query['fuel_type'] = fuel
 
-                vehicle_name = f"{make_name} {model_name} {year}"
+                if owners:
+                    query['number_of_owners'] = owners
 
-                # Dynamically filter models for selected make
-                models = MakeModel.objects.filter(make__id=make_id)
+                if selling_condition:
+                    query['selling_condition'] = selling_condition
 
-                stats = {
-                    'format_valuation_amount': format_valuation_amount,
-                    'format_maximum_amount': format_maximum_amount,
-                    'format_minimum_amount': format_minimum_amount,
-                    'vehicle_name': vehicle_name,
-                    'make': make_name,
-                    'model': model_name,
-                    'year': year,
-                    'purpose': str(purpose)
-                }
+                if modification:
+                    query['modification_status'] = modification
 
-                context = {
-                    'form_data': form_data,
-                    'makes': makes,
-                    'models': models,
-                    'year_dropdown': year_dropdown,
-                    'stats': stats,
-                }
+                # Run a single final query with all filters
+                filtered_vehicles = collection.find(query)
 
-                return render(request, 'vehicle_valuation.html', context)
+                if filtered_vehicles:
+                    df = DataFrame(list(filtered_vehicles))
 
-        # When their is no data we direct this message and prevoius form data 
-        messages.error(request, 'Sorry, no data is available for the selected vehicle. So please refer the following car details for your refernce')
-        
+                    if not df.empty:
+                        valuation_amount = round(df['price'].astype(float).mean(), -4)
+                        format_valuation_amount = "{:,.2f}".format(valuation_amount)
+
+                        maximum_amount = df['price'].astype(float).max()
+                        format_maximum_amount = "{:,.2f}".format(maximum_amount)
+
+                        minimum_amount = df['price'].astype(float).min()
+                        format_minimum_amount = "{:,.2f}".format(minimum_amount)
+
+                        vehicle_name = f"{make_name} {model_name} {year}"
+
+                        models = MakeModel.objects.filter(make__id=make_id)
+
+                        stats = {
+                            'format_valuation_amount': format_valuation_amount,
+                            'format_maximum_amount': format_maximum_amount,
+                            'format_minimum_amount': format_minimum_amount,
+                            'vehicle_name': vehicle_name,
+                            'make': make_name,
+                            'model': model_name,
+                            'year': year,
+                            'purpose': str(purpose)
+                        }
+
+                        context = {
+                            'form_data': form_data,
+                            'makes': makes,
+                            'models': models,
+                            'year_dropdown': year_dropdown,
+                            'stats': stats,
+                        }
+
+                        return render(request, 'vehicle_valuation.html', context)
+
+        # When no data is found, store session values and redirect
+        messages.error(request, 'Sorry, no data is available for the selected vehicle. So please refer the following car details for your reference')
+
         request.session['value'] = {
-                                    
-                                    'make': make_name,
-                                    'make_id':make_id,
-                                   
-                                    'model': model_name,
-                                    'model_id':model_id,
-                                    'year': year,
-                                    'purpose':purpose }
-        
+            'make': make_name,
+            'make_id': make_id,
+            'model': model_name,
+            'model_id': model_id,
+            'year': year,
+            'purpose': purpose
+        }
+
         return redirect('vehicle-closest')
+
         """
         # We used this to show the form data when we didnt had any records
         # Ensure the context is returned for unsuccessful cases

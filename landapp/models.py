@@ -123,10 +123,17 @@ class  vehicle_processed(models.Model):
     engine_capability= models.CharField(max_length=100)
     location= models.CharField(max_length=100)
     date= models.CharField(max_length=100)
+    details = models.CharField(max_length=100)
     scraped_date= models.CharField(max_length=100)
     store= models.CharField(max_length=100)
     condition= models.CharField(max_length=100)
-    
+    cleaned_details = models.CharField(max_length=100)
+    number_of_owners = models.CharField(max_length=100)
+    registration_year = models.CharField(max_length=100)
+    selling_condition = models.CharField(max_length=100)
+    modification_status = models.CharField(max_length=100)
+
+
 """
 class Meta:
     db_table = 'valuation_model'

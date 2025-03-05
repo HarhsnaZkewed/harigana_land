@@ -105,15 +105,15 @@
                         <div class="row">
                             <div class="col-12 col-md-3">
                                 <label for="mileage" class="col-form-label">Mileage (km):</label>
-                                <input type="number" name="mileage" id="mileage" class="form-control" value="{{ mileage_label }}" required>
+                                <input type="number" name="mileage" id="mileage" class="form-control" value="{{ mileage_label }}" >
                             </div>
                             <div class="col-12 col-md-3">
                                 <label for="engine_capacity" class="col-form-label">Engine (cc):</label>
-                                <input type="number" name="engine_capacity" id="engine_capacity" class="form-control" value="{{ engine_capacity_label }}" required>
+                                <input type="number" name="engine_capacity" id="engine_capacity" class="form-control" value="{{ engine_capacity_label }}" >
                             </div>
                             <div class="col-12 col-md-3">
                               <label for="gear" class="col-form-label">Gear:</label>
-                              <select name="gear" class="form-select" id="gear" required>
+                              <select name="gear" class="form-select" id="gear" >
                                 <option></option>
                                 <option value="Manual" {% if gear == 'Manual' %}selected{% endif %}>Manual</option>
                                 <option value="Automatic" {% if gear == 'Automatic' %}selected{% endif %}>Automatic</option>
@@ -122,7 +122,7 @@
                             </div>
                             <div class="col-12 col-md-3">
                               <label for="fuel" class="col-form-label">Fuel Type:</label>
-                              <select name="fuel" class="form-select" id="fuel" required>
+                              <select name="fuel" class="form-select" id="fuel" >
                                 <option></option>
                                 <option value="Petrol" {% if fuel == 'Petrol' %}selected{% endif %}>Petrol</option>
                                 <option value="Hybrid" {% if fuel == 'Hybrid' %}selected{% endif %}>Hybrid</option>
