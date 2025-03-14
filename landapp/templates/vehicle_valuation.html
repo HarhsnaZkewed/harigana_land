@@ -3,9 +3,41 @@
 {% load static %}
 
 <head>
-    <!-- Link to the styles.css file in the static directory -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
-    
+
+    <style>
+        .star-rating {
+            direction: rtl;
+            display: inline-flex;
+            gap: 5px;
+        }
+        .star-rating input[type=radio] {
+            display: none;
+        }
+        .star-rating label {
+            font-size: 2.5em;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .star-rating input[type=radio]:checked ~ label {
+            color: #ffc107;
+        }
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #ffc107;
+        }
+
+        .valuation-card {
+            border-radius: 15px;
+            background: #f8f9fa;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+    </style>
+
+
 </head>
 
 <div class="container mt-5">
@@ -24,16 +56,17 @@
         <div class="col-lg-8">
             <div class="text-center mb-4">
                 <h2 class="fw-bold">What is Your Car Worth?</h2>
-                <p > <b>Find the current market value of your car by selecting the vehicle details below.</b></p>
+                <p><b>Find the current market value of your car by selecting the vehicle details below.</b></p>
             </div>
         </div>
     </div>
 
+    <!-- Valuation Form -->
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <form id="vehicle_valuation" method="POST" class="form-horizontal" action="{% url 'vehicle_valuation'%}">
+                    <form id="vehicle_valuation" method="POST" action="{% url 'vehicle_valuation' %}">
                         {% csrf_token %}
                         
                         <div class="form-row row mb-3">
@@ -79,7 +112,7 @@
                             
 
                         </div>
-
+                        
                         <div class="form-group mb-3">
                             
                             <div class="form-group mb-3 text-center">
@@ -97,7 +130,7 @@
                             </div>
                             
                         </div>
-                        
+
                         <hr>
                         
                         <p class="text-muted">Dive more about the vehicle you are finding !!!!!!!!!!!!</p>
@@ -105,61 +138,73 @@
                         <div class="row">
                             <div class="col-12 col-md-3">
                                 <label for="mileage" class="col-form-label">Mileage (km):</label>
-                                <input type="number" name="mileage" id="mileage" class="form-control" value="{{ mileage_label }}" >
+                                <input type="number" name="mileage" id="mileage" class="form-control" step="100" value="{{ form_data.mileage|default:'' }}" >
                             </div>
                             <div class="col-12 col-md-3">
                                 <label for="engine_capacity" class="col-form-label">Engine (cc):</label>
-                                <input type="number" name="engine_capacity" id="engine_capacity" class="form-control" value="{{ engine_capacity_label }}" >
+                                <input type="number" name="engine_capacity" id="engine_capacity" class="form-control" step="25" value="{{ form_data.engine_capacity|default:'' }}" >
                             </div>
                             <div class="col-12 col-md-3">
                               <label for="gear" class="col-form-label">Gear:</label>
                               <select name="gear" class="form-select" id="gear" >
                                 <option></option>
-                                <option value="Manual" {% if gear == 'Manual' %}selected{% endif %}>Manual</option>
-                                <option value="Automatic" {% if gear == 'Automatic' %}selected{% endif %}>Automatic</option>
-                                <option value="Tiptronic" {% if gear == 'Tiptronic' %}selected{% endif %}>Tiptronic</option>
+                                <option value="Manual" {% if form_data.gear == 'Manual' %}selected{% endif %}>Manual</option>
+                                <option value="Automatic" {% if form_data.gear == 'Automatic' %}selected{% endif %}>Automatic</option>
+                                <option value="Tiptronic" {% if form_data.gear == 'Tiptronic' %}selected{% endif %}>Tiptronic</option>
                               </select>
                             </div>
                             <div class="col-12 col-md-3">
                               <label for="fuel" class="col-form-label">Fuel Type:</label>
                               <select name="fuel" class="form-select" id="fuel" >
                                 <option></option>
-                                <option value="Petrol" {% if fuel == 'Petrol' %}selected{% endif %}>Petrol</option>
-                                <option value="Hybrid" {% if fuel == 'Hybrid' %}selected{% endif %}>Hybrid</option>
-                                <option value="Diesel" {% if fuel == 'Diesel' %}selected{% endif %}>Diesel</option>
-                                <option value="Electric" {% if fuel == 'Electric' %}selected{% endif %}>Electric</option>
+                                <option value="Petrol" {% if form_data.fuel == 'Petrol' %}selected{% endif %}>Petrol</option>
+                                <option value="Hybrid" {% if form_data.fuel == 'Hybrid' %}selected{% endif %}>Hybrid</option>
+                                <option value="Diesel" {% if form_data.fuel == 'Diesel' %}selected{% endif %}>Diesel</option>
+                                <option value="Electric" {% if form_data.fuel == 'Electric' %}selected{% endif %}>Electric</option>
                               </select>
                             </div>
                           </div>
                           <div class="row">
                             <div class="col-12 col-md-4">
                                 <label for="owners" class="col-form-label">Previous Owners:</label>
-                                <input type="number" name="owners" id="owners" class="form-control" value="{{ owners }}">
+                                <input type="number" name="owners" id="owners" class="form-control" value="{{ form_data.owners|default:'' }}">
                             </div>
                             <div class="col-12 col-md-4">
                                 <label for="selling_condition" class="col-form-label">Condition:</label>
                                 <select name="selling_condition" class="form-select" id="selling_condition">
                                     <option></option>
-                                    <option value="Mint" {% if selling_condition == 'Mint' %}selected{% endif %}>Mint</option>
-                                    <option value="Good" {% if selling_condition == 'Good' %}selected{% endif %}>Good</option>
-                                    <option value="Fair" {% if selling_condition == 'Fair' %}selected{% endif %}>Fair</option>
+                                    <option value="Mint" {% if form_data.selling_condition == 'Mint' %}selected{% endif %}>Mint</option>
+                                    <option value="Good" {% if form_data.selling_condition == 'Good' %}selected{% endif %}>Good</option>
+                                    <option value="Fair" {% if form_data.selling_condition == 'Fair' %}selected{% endif %}>Fair</option>
                                 </select>
                             </div>
                             <div class="col-12 col-md-4">
                               <label for="modification" class="col-form-label">Modification:</label>
                               <select name="modification" class="form-select" id="modification">
                                   <option></option>
-                                  <option value="Modified" {% if modification == 'Modified' %}selected{% endif %}>Modified</option>
-                                  <option value="Not Modified" {% if modification == 'Not Modified' %}selected{% endif %}>Not Modified</option>
+                                  <option value="Modified" {% if form_data.modification == 'Modified' %}selected{% endif %}>Modified</option>
+                                  <option value="Not Modified" {% if form_data.modification == 'Not Modified' %}selected{% endif %}>Not Modified</option>
                               </select>
                             </div>           
-                          </div>
-                        
+                        </div>
+
+
+
+
                         <div class="form-group text-center">
-                            <button type="submit" class="btn btn-primary btn-block">
+                            <button type="submit" class="btn btn-primary btn-block" id="checkValuationBtn">
                                 <i class="fa fa-search"></i> Check Valuation
                             </button>
                         </div>
+
+                        <!-- Loading Spinner (Hidden by Default) -->
+                        <div class="text-center" id="loadingSpinner" style="display: none; margin-top: 10px;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p>Please wait, checking valuation...</p>
+                        </div>
+
                     </form>
                 </div>
             </div>
@@ -167,88 +212,108 @@
         </div>
     </div>
 
+    <!-- Vehicle Valuation Results -->
+    {% if stats %}
+    <div class="container mt-5">
+        <div class="card shadow-lg border-primary">
+            <div class="card-header bg-primary text-white text-center">
+                <h3 class="mb-0"><i class="fa fa-car"></i> Your Vehicle Valuation Result</h3>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+    
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="p-3 bg-light rounded">
+                            <h5 class="text-muted">Year</h5>
+                            <h4 class="fw-bold text-primary">{{ stats.year }}</h4>
+                        </div>
+                    </div>
 
-    <!-- No Data Message -->
-    {% if no_data %}
-    <div class="text-center mt-4">
-        <div class="alert alert-info">
-            <strong>No data available for the selected vehicle model.</strong>
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="p-3 bg-light rounded">
+                            <h5 class="text-muted">Minimum Price</h5>
+                            <h4 class="fw-bold text-warning">Rs. {{ stats.format_minimum_amount }}</h4>
+                        </div>
+                    </div>
+    
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="p-3 bg-light rounded">
+                            <h5 class="text-muted">Average Price</h5>
+                            <h4 class="fw-bold text-success">Rs. {{ stats.format_valuation_amount }}</h4>
+                        </div>
+                    </div>
+    
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="p-3 bg-light rounded">
+                            <h5 class="text-muted">Maximum Price</h5>
+                            <h4 class="fw-bold text-danger">Rs. {{ stats.format_maximum_amount }}</h4>
+                        </div>
+                    </div>
+    
+                    
+    
+                </div>
+            </div>
         </div>
     </div>
-    {% endif %}
 
+    
+    <!-- Feedback Section (Only Show After Valuation) -->
     <div class="container mt-5">
-        <h3>Vehicle Price</h3>
-        <hr>
-        {% if stats %}
+        <h3 class="text-center"> Rate Your Valuation Experience</h3>
+        <p class="text-muted text-center">Help us improve by sharing your feedback!</p>
+        <form method="POST" action="{% url 'submit_vehicle_feedback' %}">
+            {% csrf_token %}
+            <input type="hidden" name="valuation_make" id="valuation_make" value="{{ stats.make }}">
+            <input type="hidden" name="valuation_model" id="valuation_model" value="{{ stats.model }}">
+            <input type="hidden" name="valuation_year" id="valuation_year" value="{{ stats.year }}">
+            <input type="hidden" name="valuation_purpose" id="valuation_purpose" value="{{ stats.purpose }}">
+            <input type="hidden" name="valuation_mileage" id="valuation_mileage" value="{{ form_data.mileage }}">
+            <input type="hidden" name="valuation_gear" id="valuation_gear" value="{{ form_data.gear }}">
+            <input type="hidden" name="valuation_engine_capacity" id="valuation_engine_capacity" value="{{ form_data.engine_capacity }}">
+            <input type="hidden" name="valuation_fuel" id="valuation_fuel" value="{{ form_data.fuel }}">
+            <input type="hidden" name="valuation_owners" id="valuation_owners" value="{{ form_data.owners }}">
+            <input type="hidden" name="valuation_selling_condition" id="valuation_selling_condition" value="{{ form_data.selling_condition }}">  
+            <input type="hidden" name="valuation_modification" id="valuation_modification" value="{{ form_data.modification }}">
+            <input type="hidden" name="valuation_avg_price" id="valuation_avg_price" value="{{ stats.format_valuation_amount }}">
+            <input type="hidden" name="valuation_max_price" id="valuation_max_price" value="{{ stats.format_maximum_amount }}">
+            <input type="hidden" name="valuation_min_price" id="valuation_min_price" value="{{ stats.format_minimum_amount }}">
             
-                <h6>Year : {{ stats.year }}</h6>
-                <hr>
-                <h6>Average Price (Rs.) : {{ stats.format_valuation_amount }}</h6>
-                <hr>
-                <h6>Max Price (Rs.) :     {{ stats.format_maximum_amount }}</h6>
-                <hr>
-                <h6>Min Price(Rs.) :      {{ stats.format_minimum_amount }}</h6> 
-                <hr>
-                <hr>
-            
-        {% else %}
-                {% for stat in closest_stats %}
-
-                    <h6>Year : {{ stat.year }}</h6>
-                    <hr>
-                    <h6>Average Price (Rs.) : {{ stat.format_valuation_amount }}</h6>
-                    <hr>
-                    <h6>Max Price (Rs.) :     {{ stat.format_maximum_amount }}</h6>
-                    <hr>
-                    <h6>Min Price(Rs.) :      {{ stat.format_minimum_amount }}</h6> 
-                    <hr>
-                    <hr>
-                {% endfor %}
-        {% endif %}
+            <div class="mb-4 text-center">
+                <div class="star-rating">
+                    <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
+                    <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
+                    <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
+                    <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
+                    <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label>Your Feedback</label>
+                <textarea class="form-control" name="feedback" rows="3" required></textarea>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">Submit Feedback</button>
+            </div>
+        </form>
     </div>
-
+    {% endif %}
 </div>
 
-<style>
-    /* Ensure consistency with RPA.html */
-    .card {
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-body {
-        padding: 1.5rem;
-    }
-
-    .btn-primary {
-        width: auto; /* Adjust width of button */
-    }
-
-    .form-control, .form-select {
-        z-index: 1000; /* Ensure dropdown appears on top */
-    }
-</style>
-
 <script>
+    // Fetch models dynamically
     document.getElementById('make').addEventListener('change', function () {
-        const makeId = this.value; // Get selected Make ID
+        const makeId = this.value;
         const modelDropdown = document.getElementById('model');
-        
-        // Clear existing options (ensure only relevant models appear)
         modelDropdown.innerHTML = '<option value="">-- Select Model --</option>';
-        
+
         if (makeId) {
-            // Fetch models for the selected make via AJAX
             fetch(`/get-models/${makeId}/`)
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     return response.json();
                 })
                 .then(data => {
-                    // Populate the dropdown with the new models
                     data.models.forEach(model => {
                         const option = document.createElement('option');
                         option.value = model.id;
@@ -262,9 +327,12 @@
                 });
         }
     });
-</script>
 
-<script>
+    // Show loading spinner when form is submitted
+    document.getElementById('vehicle_valuation').addEventListener('submit', function () {
+        document.getElementById('checkValuationBtn').disabled = true;
+        document.getElementById('loadingSpinner').style.display = 'block';
+    });
 </script>
 
 {% endblock content %}

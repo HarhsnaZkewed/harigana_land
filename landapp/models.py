@@ -211,8 +211,60 @@ class vehicle_details(models.Model):
 
     def __str__(self):
         return f"{self.vehicle_no} ({self.purpose})"
-    
-
-
 """
+#-------------------------------------------------------------------------------------------------------------------------------------------
+
+#------------------------------------------------------ Feedback ---------------------------------------------------------------------------
+class Feedback(models.Model):
+    text = models.TextField()
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])  # Rating from 1 to 5
+    valuation_make = models.CharField(max_length=100)
+    valuation_model  = models.CharField(max_length=100)
+    valuation_year = models.CharField(max_length=10)  # Assuming year is stored as a string
+    valuation_purpose  = models.CharField(max_length=100)
+    valuation_mileage  = models.CharField(max_length=100)
+    valuation_gear  = models.CharField(max_length=100)
+    valuation_engine_capacity  = models.CharField(max_length=100)
+    valuation_fuel  = models.CharField(max_length=100)
+    valuation_owners  = models.CharField(max_length=100)
+    valuation_selling_condition  = models.CharField(max_length=100)
+    valuation_modification  = models.CharField(max_length=100)    
+    valuation_avg_price = models.CharField(max_length=10)
+    valuation_max_price = models.CharField(max_length=10)
+    valuation_min_price = models.CharField(max_length=10)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'vehicle_feedback'
+
+    def __str__(self):
+        return f"Rating: {self.rating} - {self.text[:50]}"  # Show snippet
+
+class LandValuationFeedback(models.Model):
+
+    
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    feedback = models.TextField()
+    valuation_district = models.CharField(max_length=100)
+    valuation_city = models.CharField(max_length=100)
+    valuation_map_district = models.CharField(max_length=100)
+    valuation_map_city = models.CharField(max_length=100)
+    valuation_property_type = models.CharField(max_length=100)
+    valuation_bedrooms = models.CharField(max_length=100)
+    valuation_bathrooms = models.CharField(max_length=100)
+    valuation_floor_area = models.CharField(max_length=100)
+    valuation_land_area = models.CharField(max_length=100)
+    valuation_comfort_features = models.CharField(max_length=100)
+    valuation_max_value = models.CharField(max_length=10)
+    valuation_avg_value = models.CharField(max_length=10)
+    valuation_min_value = models.CharField(max_length=10)
+    valuation_avg_rent_value = models.CharField(max_length=10)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'real_estate_feedback'
+
+    def __str__(self):
+        return f"Feedback ({self.rating} stars) on {self.submitted_at.strftime('%Y-%m-%d')}"
+    
 #-------------------------------------------------------------------------------------------------------------------------------------------

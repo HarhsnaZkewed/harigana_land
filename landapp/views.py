@@ -11,7 +11,8 @@ from pandas import DataFrame
 from django.contrib import messages
 from django.http import HttpResponseServerError
 import pandas as pd
-
+from .models import Feedback  # Assuming you have a Feedback model
+from .models import LandValuationFeedback # Assuming you have a Feedback model
 
 #from .dmt_automation import DMTautomation  # Import your automation script
 
@@ -391,7 +392,7 @@ def vehicle_valuation(request):
         #print(mileage)
         engine_capacity = request.POST.get('engine_capacity')
         #print(engine_capacity)
-        gear = request.POST.get('fuel')
+        gear = request.POST.get('gear')
         #print(gear)
         fuel = request.POST.get('fuel')
         #print(fuel)
@@ -408,6 +409,13 @@ def vehicle_valuation(request):
             'model': model_id,
             'year': int(year),
             'purpose': purpose,
+            'mileage':mileage,
+            'gear':gear,
+            'engine_capacity':engine_capacity,
+            'fuel':fuel,
+            'owners':owners,
+            'selling_condition':selling_condition,
+            'modification':modification
         })
 
         print(make_name, model_name, year)
@@ -419,20 +427,29 @@ def vehicle_valuation(request):
             'year': year  # Ensure year matches data type in DB
         }
 
-        # Check if initial query matches any documents
         if make_name and model_name and year:
             if collection.count_documents(query) == 0:
                 print("No matching vehicles found.")
             else:
-                # Continue refining the query instead of resetting it
                 if mileage:
-                    mileage_tolerance = 5000
-                    query['mileage'] = {'$gte': int(mileage) - mileage_tolerance, '$lte': int(mileage) + mileage_tolerance}
+                    #query['mileage'] = str(float(mileage))
+                    mileage = float(mileage)  # Convert input to float
+                    lower_bound = mileage - 5000  # Lower range
+                    upper_bound = mileage + 5000  # Upper range
+
+                    query['mileage'] = {"$gte": str(lower_bound), "$lte": str(upper_bound)}
+
 
                 if engine_capacity:
-                    engine_capacity_tolerance = 200
-                    query['engine_capability'] = {'$gte': int(engine_capacity) - engine_capacity_tolerance, '$lte': int(engine_capacity) + engine_capacity_tolerance}
+                    #query['engine_capability'] = str(int(engine_capacity))
+                    engine_capability = float(engine_capacity)
+                    lower_bound = engine_capability - 100
+                    upper_bound = engine_capability + 100
 
+                    query['engine_capability'] = {"$gte": str(lower_bound), "$lte": str(upper_bound)}
+          
+
+                    
                 if gear:
                     query['gear'] = gear
 
@@ -440,7 +457,7 @@ def vehicle_valuation(request):
                     query['fuel_type'] = fuel
 
                 if owners:
-                    query['number_of_owners'] = owners
+                    query['number_of_owners'] = str(float(owners))
 
                 if selling_condition:
                     query['selling_condition'] = selling_condition
@@ -448,7 +465,7 @@ def vehicle_valuation(request):
                 if modification:
                     query['modification_status'] = modification
 
-                # Run a single final query with all filters
+                # Run the refined query
                 filtered_vehicles = collection.find(query)
 
                 if filtered_vehicles:
@@ -502,18 +519,6 @@ def vehicle_valuation(request):
         }
 
         return redirect('vehicle-closest')
-
-        """
-        # We used this to show the form data when we didnt had any records
-        # Ensure the context is returned for unsuccessful cases
-        context = {
-                'form_data': form_data,
-                'makes': makes,
-                'models': models,
-                'year_dropdown': year_dropdown,
-            }
-        return render(request, 'vehicle_valuation.html', context)
-        """  # Fallback for POST request
 
     # For GET requests or default fallback
     context = {
@@ -637,5 +642,92 @@ def closest(request):
 
 
 
+#------------------------------------------------------- Feedback ----------------------------------------------------------------------------
+def submit_vehicle_feedback(request):
+    if request.method == "POST":
+        feedback_text = request.POST.get("feedback")
+        rating = request.POST.get("rating")
+        valuation_make  = request.POST.get("valuation_make")
+        valuation_model  = request.POST.get("valuation_model")
+        valuation_year  = request.POST.get("valuation_year")
+        valuation_purpose  = request.POST.get("valuation_purpose")
+        valuation_mileage  = request.POST.get("valuation_mileage")
+        valuation_gear  = request.POST.get("valuation_gear")
+        valuation_engine_capacity  = request.POST.get("valuation_engine_capacity")
+        valuation_fuel  = request.POST.get("valuation_fuel")
+        valuation_owners  = request.POST.get("valuation_owners")
+        valuation_selling_condition  = request.POST.get("valuation_selling_condition")
+        valuation_modification  = request.POST.get("valuation_modification")
+        valuation_avg_price = request.POST.get("valuation_avg_price")
+        valuation_max_price = request.POST.get("valuation_max_price")
+        valuation_min_price = request.POST.get("valuation_min_price")
+
+        if feedback_text and rating:
+            Feedback.objects.create(
+                text=feedback_text, 
+                rating=int(rating),
+                valuation_make  = valuation_make,
+                valuation_model  = valuation_model,
+                valuation_year  = valuation_year,
+                valuation_purpose  = valuation_purpose,
+                valuation_mileage  = valuation_mileage,
+                valuation_gear  = valuation_gear,
+                valuation_engine_capacity  = valuation_engine_capacity,
+                valuation_fuel  = valuation_fuel,
+                valuation_owners  = valuation_owners,
+                valuation_selling_condition  = valuation_selling_condition,
+                valuation_modification  = valuation_modification,                
+                valuation_avg_price=valuation_avg_price,
+                valuation_max_price=valuation_max_price,
+                valuation_min_price=valuation_min_price
+            )
+            messages.success(request, "Thank you for your feedback!")
+
+        return redirect('vehicle_valuation')  # Redirect to the main page
 
 
+
+def submit_land_feedback(request):
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        feedback = request.POST.get('feedback')
+        valuation_district = request.POST.get('valuation_district')
+        valuation_city = request.POST.get('valuation_cityack')
+        valuation_map_district = request.POST.get('valuation_map_district')
+        valuation_map_city = request.POST.get('valuation_map_city')
+        valuation_property_type = request.POST.get('valuation_property_type')
+        valuation_bedrooms = request.POST.get('valuation_bedrooms')
+        valuation_bathrooms = request.POST.get('valuation_bathrooms')
+        valuation_floor_area = request.POST.get('valuation_floor_area')
+        valuation_land_area = request.POST.get('valuation_land_area')
+        valuation_comfort_features = request.POST.get('valuation_comfort_features')
+
+        valuation_max_value = request.POST.get('land_max_value')
+        valuation_avg_value = request.POST.get('land_avg_value')
+        valuation_min_value = request.POST.get('land_min_value')
+        valuation_avg_rent_value = request.POST.get('land_avg_rent_value')
+
+        # Save feedback
+        LandValuationFeedback.objects.create(
+            rating=rating,
+            feedback=feedback,
+            valuation_district = valuation_district,
+            valuation_city = valuation_city,
+            valuation_map_district = valuation_map_district,
+            valuation_map_city = valuation_map_city,
+            valuation_property_type = valuation_property_type,
+            valuation_bedrooms = valuation_bedrooms,
+            valuation_bathrooms = valuation_bathrooms,
+            valuation_floor_area = valuation_floor_area,
+            valuation_land_area = valuation_land_area,
+            valuation_comfort_features = valuation_comfort_features,
+            valuation_max_value=valuation_max_value,
+            valuation_avg_value=valuation_avg_value,
+            valuation_min_value=valuation_min_value,
+            valuation_avg_rent_value=valuation_avg_rent_value
+        )
+        messages.success(request, "Thank you for your feedback!")
+        return redirect('property_valuation')  # Redirect to the results page or a thank-you page
+
+    return redirect('home')  # Fallback if accessed without POST
+#-------------------------------------------------------------------------------------------------------------------------------------------

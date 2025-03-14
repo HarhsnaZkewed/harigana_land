@@ -5,7 +5,46 @@
 <head>
     <!-- Link to the styles.css file in the static directory -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <!-- Font Awesome CDN -->
+
+
+
+
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmGsEqTlt0hvk0NLuE0F-6WMjlIiRp5qE&callback=initMap"></script>
+
+    <style>
+        .star-rating {
+            direction: left;
+            display: inline-flex;
+            gap: 5px;
+        }
+        .star-rating input[type=radio] {
+            display: none;
+        }
+        .star-rating label {
+            font-size: 2.5em;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .star-rating input[type=radio]:checked ~ label {
+            color: #ffc107;
+        }
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #ffc107;
+        }
+
+        .valuation-card {
+            border-radius: 15px;
+            background: #f8f9fa;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        
+    </style>
 </head>
 
 </br>
@@ -21,7 +60,7 @@
     </div>
 </div>
 
-<div class="form-container">
+<div class="form-container" >
     
     
 
@@ -199,82 +238,171 @@
         <!--
         <input type="submit" value="Submit">
         -->
-        <button type="submit" class="btn btn-primary btn-block">
-            <i class="fa fa-search"></i> Check Valuation
-        </button>
-
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary btn-block" id="checkValuationBtn">
+                <i class="fa fa-search"></i> Check Valuation
+            </button>
+        </div>
+    
+        <!-- Loading Spinner -->
+        <div class="text-center" id="loadingSpinner" style="display: none; margin-top: 10px;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>Please wait, checking valuation...</p>
+        </div>
     </form>
 </div>
 
+    
 
+<!-- ✅ Only Show Valuation Summary and Feedback if prices is NOT None -->
+{% if prices.max_value %}
+    <!-- Property Valuation Summary -->
+    <div class="container mt-5">
+        <div class="card shadow-lg border-primary">
+            <div class="card-header bg-primary text-white text-center">
+                <h3 class="mb-0"><i class="fa fa-home"></i> Property Valuation Summary</h3>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
 
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="p-3 bg-light rounded">
+                            <h5 class="text-muted">Maximum Property Value</h5>
+                            <h4 class="fw-bold text-danger">{{ prices.max_value }}</h4>
+                        </div>
+                    </div>
 
-    <h2>Property Records:</h2>
-    {% if prices %}
-        <table class='results-table'>
-            <thead>
-                <tr>
-                    <th>Max Property Value</th>
-                    <th>Average Property value</th>
-                    <th>Minimum Property value</th>
-                    <th>Average Property Rent value</th>
-                </tr>
-            </thead>
-            
-            <tbody>
-                <tr>
-                    <td>{{ prices.max_value }}</td>
-                    <td>{{ prices.avg_value }}</td>
-                    <td>{{ prices.min_value }}</td>
-                    <td>{{ prices.avg_rent_value }}</td>
-                </tr>
-            </tbody>
-            
-        </table>
-    {% else %}
-        <p>No properties found.</p>
-    {% endif %}
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="p-3 bg-light rounded">
+                            <h5 class="text-muted">Average Property Value</h5>
+                            <h4 class="fw-bold text-success"> {{ prices.avg_value }}</h4>
+                        </div>
+                    </div>
 
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="p-3 bg-light rounded">
+                            <h5 class="text-muted">Minimum Property Value</h5>
+                            <h4 class="fw-bold text-warning">{{ prices.min_value }}</h4>
+                        </div>
+                    </div>
 
-    <h2>Individual Records:</h2>
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="p-3 bg-light rounded">
+                            <h5 class="text-muted">Average Rent Value</h5>
+                            <h4 class="fw-bold text-primary">{{ prices.avg_rent_value }}</h4>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% if records %}
-        <table class="results-table">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Location</th>
-                    <th>Bedrooms</th>
-                    <th>Bathrooms</th>
-                    <th>Floor Area</th>
-                    <th>Land Area</th>
-                    <th>Price</th>
-                    <!--<th>Property Details</th>-->
-                    <!--<th>Property Features</th>-->
-                    <th>Property Type</th>
-                    <!--<th>Website</th>-->
-                </tr>
-            </thead>
-            <tbody>
-                {% for record in records %}
-                    <tr>
-                        <td>{{ record.title }}</td>
-                        <td>{{ record.location }}</td>
-                        <td>{{ record.bedrooms}}</td>
-                        <td>{{ record.bathrooms }}</td>
-                        <td>{{ record.floor_area }}</td>
-                        <td>{{ record.land_area }}</td>
-                        <td>{{ record.unit_price }}</td>
-                        <!--<td>{{ record.property_details }}</td>-->
-                        <!--<td>{{ record.property_features }}</td>-->
-                        <td>{{ record.property_type }}</td>
-                        <!--<td>{{ record.website }}</td>-->
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No properties found.</p>
-    {% endif %}
+ 
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        
+        <div class="card-header bg-gradient text-white text-center" style="background: linear-gradient(90deg, #0d47a1, #1976d2); border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+            <h3 class="text-primary">Individual Property Records</h3>
+        </div>
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle border rounded-3 overflow-hidden">
+                    <thead class="table-dark">
+                        <tr class="text-center">
+                            <th>Title</th>
+                            <th>Location</th>
+                            <th>Bedrooms</th>
+                            <th>Bathrooms</th>
+                            <th>Floor Area (sqft)</th>
+                            <th>Land Area (sqft)</th>
+                            <th>Price (Rs)</th>
+                            <th>Property Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in records %}
+                        <tr>
+                            <td><strong>{{ record.title }}</strong></td>
+                            <td>{{ record.location }}</td>
+                            <td class="text-center">{{ record.bedrooms }}</td>
+                            <td class="text-center">{{ record.bathrooms }}</td>
+                            <td class="text-end">{{ record.floor_area }}</td>
+                            <td class="text-end">{{ record.land_area }}</td>
+                            <td class="text-end text-success fw-bold">{{ record.unit_price }}</td>
+                            <td class="text-center">{{ record.property_type }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="container mt-5">
+    <div class="alert alert-warning text-center shadow-sm" role="alert">
+        <i class="fa fa-exclamation-circle me-2"></i> No properties found.
+    </div>
+</div>
+{% endif %}
+
+
+    <!-- ✅ Feedback Section -->
+    <div class="container mt-5">
+        <h3 class="text-center">Rate Your Land Valuation Experience</h3>
+        <p class="text-muted text-center">We value your opinion. Please share your experience!</p>
+
+        <form method="POST" action="{% url 'submit_land_feedback' %}">
+            {% csrf_token %}
+            
+            <input type="hidden" name="valuation_district"      id ="valuation_district" value="{{ form_data.district }}">
+            <input type="hidden" name="valuation_city"          id="valuation_city" value="{{ form_data.city }}">
+            <input type="hidden" name="valuation_map_district"  id="valuation_map_district" value="{{ form_data.map_district }}">
+            <input type="hidden" name="valuation_map_city"      id="valuation_map_city"  value="{{ form_data.map_city }}">
+            <input type="hidden" name="valuation_property_type" id="valuation_property_type" value="{{ form_data.property_type }}">
+            <input type="hidden" name="valuation_bedrooms"      id="valuation_bedrooms"      value="{{ form_data.bedrooms }}">
+            <input type="hidden" name="valuation_bathrooms"     id="valuation_bathrooms"  value="{{ form_data.bathrooms }}">
+            <input type="hidden" name="valuation_floor_area"    id="valuation_floor_area"  value="{{ form_data.floor_area }}">
+            <input type="hidden" name="valuation_land_area"     id="valuation_land_area"     value="{{ form_data.land_area }}">
+            <input type="hidden" name="valuation_comfort_features" id="valuation_comfort_features" value="{{ form_data.comfort_features }}">       
+
+            <input type="hidden" name="land_max_value" value="{{ prices.max_value }}">
+            <input type="hidden" name="land_avg_value" value="{{ prices.avg_value }}">
+            <input type="hidden" name="land_min_value" value="{{ prices.min_value }}">
+            <input type="hidden" name="land_avg_rent_value" value="{{ prices.avg_rent_value }}">
+
+            <div class="mb-4 text-center">
+                <div class="star-rating d-inline-flex flex-row-reverse">
+                    <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
+                    <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
+                    <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
+                    <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
+                    <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="feedback" class="form-label">Your Feedback</label>
+                <textarea class="form-control" id="feedback" name="feedback" rows="4" placeholder="Write your feedback here..." required></textarea>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">Submit Feedback</button>
+            </div>
+        </form>
+    </div>
+    
+{% endif %}
+    
+
+
+
+    
+    
 
     <script>
 
@@ -429,8 +557,6 @@
             toggleSwitch.addEventListener("change", handleToggle);
         });
         
-
-        
     </script>
 
     <script>
@@ -559,8 +685,12 @@
             toggleSwitch.addEventListener("change", handleToggle);
             propertyTypeSelect.addEventListener("change", handlePropertyTypeChange);
         });
-        
-        
+
+             // Show loading spinner when form is submitted
+        document.getElementById('valuation_form').addEventListener('submit', function () {
+        document.getElementById('checkValuationBtn').disabled = true;
+        document.getElementById('loadingSpinner').style.display = 'block';
+        });
         
         
     </script>
@@ -574,7 +704,10 @@
                 alert("Please select a location on the map.");
                 event.preventDefault();
             }
-        });        
+        });    
+        
+        
+        
     </script>
     
     <!--This script will make sure that the chek condition is changed to on if the values are more than 0-->
@@ -591,14 +724,17 @@
         }                 
     </script>
 
-    
-
     <script>
-      
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');  // This targets first form (valuation form)
+            const loadingSpinner = document.getElementById('loadingSpinner');
+        
+            form.addEventListener('submit', function () {
+                loadingSpinner.style.display = 'block'; // Show spinner when form is submitted
+            });
+        });
     </script>
 
-
-    
-          
+        
 
 {% endblock content %}

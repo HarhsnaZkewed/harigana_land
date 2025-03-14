@@ -18,6 +18,7 @@ urlpatterns = [
     path('get-models/<int:make_id>/', views.get_models, name='get_models'),
     path('vehicle-closest/', views.closest, name='vehicle-closest'),
     
-
+    path('submit-vehicle-feedback/', views.submit_vehicle_feedback, name='submit_vehicle_feedback'),
+    path('submit-land-feedback/', views.submit_land_feedback, name='submit_land_feedback'),
     
 ]
