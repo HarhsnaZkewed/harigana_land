@@ -267,4 +267,6 @@ class LandValuationFeedback(models.Model):
     def __str__(self):
         return f"Feedback ({self.rating} stars) on {self.submitted_at.strftime('%Y-%m-%d')}"
     
+
+    #comment
 #-------------------------------------------------------------------------------------------------------------------------------------------
