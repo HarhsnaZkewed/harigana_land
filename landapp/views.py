@@ -142,12 +142,13 @@ def property_view(request):
         
 
         floor_area = request.POST.get('floor_area', '')
+        #print(floor_area)
         floor_area_check = request.POST.get('floor_area_check')
         
 
         land_area = request.POST.get('land_area', '')
-        land_area_check = request.POST.get('land_area_check')       
-
+        #print(land_area)
+        land_area_check = request.POST.get('land_area_check')
 
         comfort_features = request.POST.getlist('feature', [])
 
@@ -466,10 +467,11 @@ def vehicle_valuation(request):
                     query['modification_status'] = modification
 
                 # Run the refined query
-                filtered_vehicles = collection.find(query)
+                filtered_vehicle_list  = list(collection.find(query))
 
-                if filtered_vehicles:
-                    df = DataFrame(list(filtered_vehicles))
+                if filtered_vehicle_list:
+                    
+                    df = DataFrame(filtered_vehicle_list)
 
                     if not df.empty:
                         valuation_amount = round(df['price'].astype(float).mean(), -4)
@@ -496,7 +498,9 @@ def vehicle_valuation(request):
                             'purpose': str(purpose)
                         }
 
+                        
                         context = {
+                            'records': filtered_vehicle_list,
                             'form_data': form_data,
                             'makes': makes,
                             'models': models,
@@ -507,7 +511,7 @@ def vehicle_valuation(request):
                         return render(request, 'vehicle_valuation.html', context)
 
         # When no data is found, store session values and redirect
-        messages.error(request, 'Sorry, no data is available for the selected vehicle. So please refer the following car details for your reference')
+        #messages.error(request, 'Sorry, no data is available for the selected vehicle. So please refer the following car details for your reference')
 
         request.session['value'] = {
             'make': make_name,
@@ -515,7 +519,9 @@ def vehicle_valuation(request):
             'model': model_name,
             'model_id': model_id,
             'year': year,
-            'purpose': purpose
+            'purpose': purpose,
+            'form_data': form_data,
+            'year_dropdown': year_dropdown,
         }
 
         return redirect('vehicle-closest')
@@ -534,26 +540,32 @@ def vehicle_valuation(request):
 def closest(request):
     value = request.session.get('value', None)  # Use get to avoid KeyError
     if not value:
-        return HttpResponseServerError("No data in session")
+        messages.error(request,"No data in session")
+        return redirect('vehicle_valuation')
 
-    makes = value.get("makes")
+    makes = Make.objects.all()
     make = value.get("make")
     make_id = value.get("make_id")
     
-    models = value.get("models")
+    models =  MakeModel.objects.all()
     model = value.get("model")
     model_id = value.get("model_id")
     
+    form_data = value.get("form_data")
+
+    year_dropdown = value.get("year_dropdown")
     user_year = value.get("year")
     purpose = value.get("purpose")
 
     if not all([make, model, user_year]):
-        return HttpResponseServerError("Incomplete data")
+        messages.error(request,"Incomplete data")
+        return redirect('vehicle_valuation')
 
     try:
         user_year = int(user_year)
     except ValueError:
-        return HttpResponseServerError("Invalid year format")
+        messages.error(request,"Invalid year format")
+        return redirect('vehicle_valuation')
 
     vehicle_name = f"{make} {model} {user_year}"
     
@@ -566,13 +578,30 @@ def closest(request):
     df = DataFrame(list(vehicles))
 
     if df.empty:
-        return HttpResponseServerError("No data found for the given make and model")
+        #messages.error(request,"No data found for the given make and model")
+        stats = {
+                    'vehicle_name': vehicle_name,
+                    'make': make,
+                    'model': model,
+                    'year': user_year,
+                    'purpose': str(purpose)
+                }
+        context = {
+            'makes': makes,
+            'models': models,
+            'year_dropdown': year_dropdown,
+            'form_data': form_data,
+            'stats': stats,  # Just to test modal logic
+            'records': ''  # Make sure it's a falsy value
+        }
+        return render(request, 'vehicle_valuation.html', context)
 
     # Ensure the columns exist in the DataFrame
     required_columns = ['year', 'price']
     for column in required_columns:
         if column not in df.columns:
-            return HttpResponseServerError(f"Missing column: {column}")
+            messages.error(request,f"Missing column: {column}")
+            return redirect('vehicle_valuation')
 
     try:
         # Convert 'year' and 'price' columns to numeric
@@ -628,12 +657,14 @@ def closest(request):
         context['models'] = models
         context['year_dropdown'] = year_dropdown
         context['form_data'] = form_data
+        context['records'] = vehicles
         
         return render(request, 'vehicle_valuation.html', context)
 
 
     except Exception as e:
-        return HttpResponseServerError(f"An error occurred: {str(e)}")
+        messages.error(request,f"An error occurred: {str(e)}")
+        return redirect('vehicle_valuation')
 
     
    
